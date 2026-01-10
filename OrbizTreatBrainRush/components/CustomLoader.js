@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { WebView } from 'react-native-webview';
-import { View, StyleSheet, ImageBackground, Image } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  Platform,
+} from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -59,10 +65,22 @@ const CustomLoader = () => {
       />
 
       <View>
-        <Image
-          source={require('../../assets/orbizImages/oboardimg1.png')}
-          style={{ marginBottom: 50 }}
-        />
+        {Platform.OS === 'android' ? (
+          <Image
+            source={require('../../assets/orbizImages/icon.png')}
+            style={{
+              marginBottom: 50,
+              width: 300,
+              height: 300,
+              borderRadius: 50,
+            }}
+          />
+        ) : (
+          <Image
+            source={require('../../assets/orbizImages/oboardimg1.png')}
+            style={{ marginBottom: 50 }}
+          />
+        )}
         <Image
           source={require('../../assets/orbizImages/easyOrb.png')}
           style={{

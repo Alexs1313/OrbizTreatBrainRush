@@ -6,15 +6,16 @@ import {
   Modal,
   Platform,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import CustomRoundButton from '../[components]/CustomRoundButton';
-import CustomMenuButton from '../[components]/CustomMenuButton';
+import CustomRoundButton from '../components/CustomRoundButton';
+import CustomMenuButton from '../components/CustomMenuButton';
 import { BlurView } from '@react-native-community/blur';
-import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
+import { useOrbizTreatStore } from '../storage/orbizTreatContext';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Sound from 'react-native-sound';
@@ -188,6 +189,13 @@ const OrbizTreatHome = () => {
       : nav.navigate('OrbizTreatHome');
   };
 
+  const handleShare = () => {
+    Share.share({
+      message:
+        'Check out Orbiz Treat Brain Rush! A fun and fast-paced word challenge game. Download it now!',
+    });
+  };
+
   return (
     <ImageBackground
       source={require('../../assets/orbizImages/orbizMainBack.png')}
@@ -223,17 +231,19 @@ const OrbizTreatHome = () => {
             </ImageBackground>
 
             <View style={st.bottomButtonsWrap}>
-              <CustomRoundButton
-                onPress={() => toggleSound(!isEnabledMusic)}
-                btnImage={
-                  isEnabledMusic
-                    ? require('../../assets/orbizImages/orbizMusicOff.png')
-                    : require('../../assets/orbizImages/inactiveSound.png')
-                }
-              />
+              {Platform.OS !== 'android' && (
+                <CustomRoundButton
+                  onPress={() => toggleSound(!isEnabledMusic)}
+                  btnImage={
+                    isEnabledMusic
+                      ? require('../../assets/orbizImages/orbizMusicOff.png')
+                      : require('../../assets/orbizImages/inactiveSound.png')
+                  }
+                />
+              )}
 
               <CustomRoundButton
-                onPress={onNextPress}
+                onPress={handleShare}
                 btnImage={require('../../assets/orbizImages/orbizShare.png')}
               />
 
@@ -266,17 +276,24 @@ const OrbizTreatHome = () => {
           style={{ position: 'absolute', right: 30, bottom: 30 }}
         />
 
-        <Modal transparent={true} animationType="fade" visible={showRules}>
+        <Modal
+          transparent={true}
+          animationType="fade"
+          visible={showRules}
+          statusBarTranslucent={Platform.OS === 'android'}
+        >
           <View style={st.modalBackdrop}>
             <BlurView
               blurType="dark"
               blurAmount={1}
               style={{ position: 'absolute', width: '100%', height: '100%' }}
             />
-            <Image
-              source={require('../../assets/orbizImages/oboardimg1.png')}
-              style={{ top: 10, zIndex: 1 }}
-            />
+            {Platform.OS === 'android' ? null : (
+              <Image
+                source={require('../../assets/orbizImages/oboardimg1.png')}
+                style={{ top: 10, zIndex: 1 }}
+              />
+            )}
 
             <ImageBackground
               source={require('../../assets/orbizUi/homeMenuBoard.png')}

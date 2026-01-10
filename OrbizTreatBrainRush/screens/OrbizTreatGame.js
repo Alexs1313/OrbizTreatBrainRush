@@ -15,9 +15,9 @@ import Toast from 'react-native-toast-message';
 
 // my local imports ---------------------------------->
 
-import CustomRoundButton from '../[components]/CustomRoundButton';
-import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
-import { orbizGameTasks } from '../[data]/orbizGameTasks';
+import CustomRoundButton from '../components/CustomRoundButton';
+import { useOrbizTreatStore } from '../storage/orbizTreatContext';
+import { orbizGameTasks } from '../data/orbizGameTasks';
 
 const gameOrbs = {
   easy: {
@@ -768,15 +768,24 @@ export default function OrbizTreatGame() {
                     </View>
 
                     {timerSeconds >= 1 && (
-                      <Image
-                        source={require('../../assets/orbizImages/timer.gif')}
+                      <View
                         style={{
-                          width: 150,
-                          height: 150,
-                          marginTop: 30,
-                          marginBottom: 30,
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}
-                      />
+                      >
+                        <Image
+                          source={require('../../assets/orbizImages/timer.gif')}
+                          style={{
+                            width: 150,
+                            height: 150,
+                            marginTop: 30,
+                            marginBottom: 30,
+                          }}
+                        />
+
+                        <Text style={styles.timerTx}>{timerSeconds}</Text>
+                      </View>
                     )}
                   </>
                 ) : (
@@ -889,6 +898,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Sansation-Bold',
     textAlign: 'center',
     marginTop: 12,
+  },
+  timerTx: {
+    color: '#f461beff',
+    fontSize: 56,
+    textAlign: 'center',
+    position: 'absolute',
+    fontFamily: 'Sansation-Bold',
+    zIndex: 120,
+  },
+  revealOrbImg: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
   },
   orbColumn: { alignItems: 'center', marginTop: 90 },
   orbizBoard: {

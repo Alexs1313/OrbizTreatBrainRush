@@ -3,6 +3,7 @@ import { useState } from 'react';
 import {
   Image,
   ImageBackground,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,7 +20,10 @@ const OrbizTreatOnboard = () => {
       orbizttl: 'Welcome to Orbiz Treat BrainRush',
       orbizdesc:
         'A fast and fun party game where every challenge lasts just 10 seconds. Get ready to think quick and play even quicker.',
-      orbizimg: require('../../assets/orbizImages/oboardimg1.png'),
+      orbizimg:
+        Platform.OS === 'ios'
+          ? require('../../assets/orbizImages/oboardimg1.png')
+          : require('../../assets/orbizImages/icon.png'),
     },
     {
       orbizttl: 'Play Your Way',
@@ -60,7 +64,15 @@ const OrbizTreatOnboard = () => {
           <View>
             <Image
               source={orbizViews[isCurrentViewIndex].orbizimg}
-              style={isCurrentViewIndex === 0 && { marginBottom: 30 }}
+              resizeMode="contain"
+              style={[
+                isCurrentViewIndex === 0 && { marginBottom: 30 },
+                Platform.OS === 'android' && {
+                  width: 259,
+                  height: 250,
+                  borderRadius: 50,
+                },
+              ]}
             />
             {isCurrentViewIndex === 0 && (
               <>

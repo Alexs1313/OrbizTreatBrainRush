@@ -8,8 +8,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import CustomRoundButton from '../[components]/CustomRoundButton';
-import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
+import CustomRoundButton from '../components/CustomRoundButton';
+import { useOrbizTreatStore } from '../storage/orbizTreatContext';
 
 const orbizAchievements = [
   {
