@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
+  Linking,
   Modal,
   Platform,
   ScrollView,
@@ -12,16 +13,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import CustomRoundButton from '../components/CustomRoundButton';
-import CustomMenuButton from '../components/CustomMenuButton';
+import CustomRoundButton from '../[components]/CustomRoundButton';
+import CustomMenuButton from '../[components]/CustomMenuButton';
 import { BlurView } from '@react-native-community/blur';
-import { useOrbizTreatStore } from '../storage/orbizTreatContext';
+import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Sound from 'react-native-sound';
+import Orientation from 'react-native-orientation-locker';
 
-const OrbizTreatHome = () => {
-  const [isCurrentViewIndex, setIsCurrentViewIndex] = useState(0);
+const BG = require('../../assets/orbizImages/loaderBack.png');
+
+const MainScreen = () => {
   const [showRules, setShowRules] = useState(false);
   const nav = useNavigation();
   const {
@@ -37,6 +40,13 @@ const OrbizTreatHome = () => {
     'ambient-piano-and-strings-10711.mp3',
     'ambient-piano-and-strings-10711.mp3',
   ];
+
+  useFocusEffect(
+    useCallback(() => {
+      Platform.OS === 'android' && Orientation.lockToPortrait();
+      return () => Orientation.unlockAllOrientations();
+    }, []),
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -183,12 +193,6 @@ const OrbizTreatHome = () => {
     }
   };
 
-  const onNextPress = () => {
-    isCurrentViewIndex < 3
-      ? setIsCurrentViewIndex(isCurrentViewIndex + 1)
-      : nav.navigate('OrbizTreatHome');
-  };
-
   const handleShare = () => {
     Share.share({
       message:
@@ -196,14 +200,18 @@ const OrbizTreatHome = () => {
     });
   };
 
+  const shareApp = () => {
+    Linking.openURL(
+      'https://apps.apple.com/us/app/orbiz-treat-brainrush/id6757544059',
+    );
+  };
+
   return (
-    <ImageBackground
-      source={require('../../assets/orbizImages/orbizMainBack.png')}
-      style={{ flex: 1, resizeMode: 'cover' }}
-    >
+    <ImageBackground source={BG} style={{ flex: 1, resizeMode: 'cover' }}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
+        bounces={false}
       >
         <View style={st.orbizBox}>
           <View>
@@ -243,7 +251,7 @@ const OrbizTreatHome = () => {
               )}
 
               <CustomRoundButton
-                onPress={handleShare}
+                onPress={Platform.OS === 'ios' ? shareApp : handleShare}
                 btnImage={require('../../assets/orbizImages/orbizShare.png')}
               />
 
@@ -362,12 +370,12 @@ const st = StyleSheet.create({
     marginBottom: 20,
   },
   orbizRulesSub: {
-    fontSize: 18,
+    fontSize: 17,
     color: '#FFFFFF',
     textAlign: 'center',
     fontFamily: 'Sansation-Regular',
     fontStyle: 'italic',
-    paddingHorizontal: 25,
+    paddingHorizontal: 22,
     lineHeight: 24,
   },
   modalBackdrop: {
@@ -379,4 +387,4 @@ const st = StyleSheet.create({
   },
 });
 
-export default OrbizTreatHome;
+export default MainScreen;

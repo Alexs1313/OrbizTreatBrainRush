@@ -7,8 +7,6 @@ export const useOrbizTreatStore = () => {
 };
 
 export const StoreProvider = ({ children }) => {
-  // states
-
   const [unlockedIds, setUnlockedIds] = useState([]);
   const [isEnabledMusic, setIsEnabledMusic] = useState(false);
   const [isEnabledNotifications, setIsEnabledNotifications] = useState(false);
@@ -35,17 +33,16 @@ export const StoreProvider = ({ children }) => {
 
       // Achievements =>
 
-      // 1: Star Winner
       if (gcompl >= 1) unlockAchievement(1);
-      // 2: Sweet Bomb
+
       if (streak >= 5) unlockAchievement(2);
-      // 3: Lollipop Pro
+
       if (tscore >= 50) unlockAchievement(3);
-      // 4: Grape Squad
+
       if (party >= 10) unlockAchievement(4);
-      // 5: Watermelon Brain
+
       if (hardLvl >= 1) unlockAchievement(5);
-      // 6: Plum Veteran
+
       if (gcompl >= 10) unlockAchievement(6);
     },
     [

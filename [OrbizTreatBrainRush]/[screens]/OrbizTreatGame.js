@@ -15,9 +15,11 @@ import Toast from 'react-native-toast-message';
 
 // my local imports ---------------------------------->
 
-import CustomRoundButton from '../components/CustomRoundButton';
-import { useOrbizTreatStore } from '../storage/orbizTreatContext';
-import { orbizGameTasks } from '../data/orbizGameTasks';
+import CustomRoundButton from '../[components]/CustomRoundButton';
+import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
+import { orbizGameTasks } from '../[data]/orbizGameTasks';
+
+const BG = require('../../assets/orbizImages/loaderBack.png');
 
 const gameOrbs = {
   easy: {
@@ -43,7 +45,6 @@ const ALLOWED_ROUNDS = [5, 10, 15, 20];
 const MODES = ['Manual', 'Mystery Orb'];
 
 export default function OrbizTreatGame() {
-  // nav
   const navigation = useNavigation();
 
   // states
@@ -75,11 +76,8 @@ export default function OrbizTreatGame() {
   const confettiTimeoutRef = useRef(null);
   const winTimeoutRef = useRef(null);
 
-  // store
   const { recordRound, recordGameCompleted, isEnabledNotifications } =
     useOrbizTreatStore();
-
-  // did mount
 
   useEffect(() => {
     return () => clearGameTimers();
@@ -87,22 +85,23 @@ export default function OrbizTreatGame() {
 
   useEffect(() => {
     if (!players || players.length === 0) return;
+
     const errors = {};
+    const playerNames = players.map(p => p.name.trim());
 
-    const playersNames = players.map(p => p.name.trim());
-
-    const counts = {};
-    playersNames.forEach(n => {
-      if (!n) return;
-      counts[n] = (counts[n] || 0) + 1;
+    const nameCounts = {};
+    playerNames.forEach(name => {
+      if (!name) return;
+      nameCounts[name] = (nameCounts[name] || 0) + 1;
     });
 
     setNameErrors(errors);
   }, [players]);
 
-  const pickRandomTask = different => {
-    const tasksList = orbizGameTasks[different];
-    return tasksList[Math.floor(Math.random() * tasksList.length)];
+  const pickRandomTask = difficulty => {
+    const tasks = orbizGameTasks[difficulty];
+    const randomIndex = Math.floor(Math.random() * tasks.length);
+    return tasks[randomIndex];
   };
 
   const clearGameTimers = () => {
@@ -129,17 +128,18 @@ export default function OrbizTreatGame() {
   };
 
   const goToNames = () => {
-    const playersNames = Array.from(
-      { length: playerCount },
-      (_, playerIndex) => ({
-        id: playerIndex + 1,
-        name: '',
-        score: 0,
-      }),
-    );
-    setPlayers(playersNames);
+    const plrs = Array.from({ length: playerCount }, (_, index) => ({
+      id: index + 1,
+      name: '',
+      score: 0,
+    }));
+
+    setPlayers(plrs);
     setPhase('names');
-    if (isEnabledNotifications) Toast.show({ text1: 'Enter player names.' });
+
+    if (isEnabledNotifications) {
+      Toast.show({ text1: 'Enter player names.' });
+    }
   };
 
   const canProceedFromNames = () =>
@@ -195,43 +195,65 @@ export default function OrbizTreatGame() {
 
   const handleSpin = () => {
     if (spinAnimating || timerRunning || showQuestionSection) return;
+
     setSpinAnimating(true);
-    const diffs = ['easy', 'medium', 'hard'];
-    let idx = 0;
+
+    const difficulties = ['easy', 'medium', 'hard'];
+    let currentIndex = 0;
+
     spinIntervalRef.current = setInterval(() => {
-      setSpinPreview(diffs[idx % 3]);
-      idx++;
+      setSpinPreview(difficulties[currentIndex % 3]);
+      currentIndex++;
     }, 80);
+
     setTimeout(() => {
       if (spinIntervalRef.current) {
         clearInterval(spinIntervalRef.current);
         spinIntervalRef.current = null;
       }
-      const final = diffs[Math.floor(Math.random() * 3)];
-      setSpinPreview(final);
+
+      const randomDifficulty = difficulties[Math.floor(Math.random() * 3)];
+      setSpinPreview(randomDifficulty);
       setSpinAnimating(false);
-      selectOrb(final);
+      selectOrb(randomDifficulty);
     }, 1200);
   };
 
   const handleDecision = accepted => {
     setOptionsVisible(false);
     clearGameTimers();
+
     if (accepted && chosenOrb) {
-      const pts = gameOrbs[chosenOrb].points;
+      const points = gameOrbs[chosenOrb].points;
+
       setPlayers(prev =>
-        prev.map((p, i) =>
-          i === currentPlayerIndex ? { ...p, score: p.score + pts } : p,
+        prev.map((player, index) =>
+          index === currentPlayerIndex
+            ? { ...player, score: player.score + points }
+            : player,
         ),
       );
+
       if (recordRound) {
-        recordRound({ scored: true, points: pts, mode, difficulty: chosenOrb });
+        recordRound({
+          scored: true,
+          points,
+          mode,
+          difficulty: chosenOrb,
+        });
       }
 
       console.log('confetti!!');
-
       setConfettiVisible(true);
-      if (confettiTimeoutRef.current) clearTimeout(confettiTimeoutRef.current);
+
+      if (isEnabledNotifications) {
+        Toast.show({ text1: 'Great job! You earned points.' });
+      }
+
+      if (confettiTimeoutRef.current) {
+        clearTimeout(confettiTimeoutRef.current);
+      }
+
       confettiTimeoutRef.current = setTimeout(() => {
         setConfettiVisible(false);
         confettiTimeoutRef.current = null;
@@ -246,22 +268,27 @@ export default function OrbizTreatGame() {
           difficulty: chosenOrb || 'none',
         });
       }
+
       advanceTurn();
     }
   };
 
   const advanceTurn = () => {
     resetTurnState();
-    const nextPlayer = currentPlayerIndex + 1;
-    if (nextPlayer >= players.length) {
+
+    const nextPlayerIndex = currentPlayerIndex + 1;
+
+    if (nextPlayerIndex >= players.length) {
       if (currentRound >= rounds) {
-        if (recordGameCompleted) recordGameCompleted();
+        if (recordGameCompleted) {
+          recordGameCompleted();
+        }
         setPhase('results');
       } else {
         setPhase('intermediate');
       }
     } else {
-      setCurrentPlayerIndex(nextPlayer);
+      setCurrentPlayerIndex(nextPlayerIndex);
     }
   };
 
@@ -277,7 +304,11 @@ export default function OrbizTreatGame() {
   useEffect(() => {
     if (phase === 'results') {
       setWinVisible(true);
-      if (winTimeoutRef.current) clearTimeout(winTimeoutRef.current);
+
+      if (winTimeoutRef.current) {
+        clearTimeout(winTimeoutRef.current);
+      }
+
       winTimeoutRef.current = setTimeout(() => {
         setWinVisible(false);
         winTimeoutRef.current = null;
@@ -289,6 +320,7 @@ export default function OrbizTreatGame() {
       }
       setWinVisible(false);
     }
+
     return () => {
       if (winTimeoutRef.current) {
         clearTimeout(winTimeoutRef.current);
@@ -303,12 +335,12 @@ export default function OrbizTreatGame() {
     );
 
   const changeRounds = delta => {
-    const idx = ALLOWED_ROUNDS.indexOf(rounds);
-    const newIdx = Math.max(
+    const currentIndex = ALLOWED_ROUNDS.indexOf(rounds);
+    const newIndex = Math.max(
       0,
-      Math.min(ALLOWED_ROUNDS.length - 1, idx + delta),
+      Math.min(ALLOWED_ROUNDS.length - 1, currentIndex + delta),
     );
-    setRounds(ALLOWED_ROUNDS[newIdx]);
+    setRounds(ALLOWED_ROUNDS[newIndex]);
   };
 
   const changeMode = delta => {
@@ -317,23 +349,28 @@ export default function OrbizTreatGame() {
     setMode(MODES[newIdx]);
   };
 
-  const selectOrb = diff => {
+  const selectOrb = difficulty => {
     if (timerRunning || showQuestionSection || spinAnimating) return;
-    setChosenOrb(diff);
+
+    setChosenOrb(difficulty);
     setRevealSelected(true);
     setShowQuestionSection(false);
     setCurrentTask(null);
     setOptionsVisible(false);
+
     if (delayRef.current) {
       clearTimeout(delayRef.current);
       delayRef.current = null;
     }
+
     delayRef.current = setTimeout(() => {
       setRevealSelected(false);
-      const task = pickRandomTask(diff);
+
+      const task = pickRandomTask(difficulty);
       setCurrentTask(task);
       setShowQuestionSection(true);
       setOptionsVisible(false);
+
       startTimer();
       delayRef.current = null;
     }, 2500);
@@ -342,7 +379,6 @@ export default function OrbizTreatGame() {
   const currentPlayer = players[currentPlayerIndex] || { name: '' };
 
   const ResultsOrbizGameCard = ({ title, showTrophy }) => {
-    // Create a sorted copy so original players state is not mutated
     const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
     return (
@@ -423,10 +459,7 @@ export default function OrbizTreatGame() {
   };
 
   return (
-    <ImageBackground
-      source={require('../../assets/orbizImages/orbizMainBack.png')}
-      style={{ flex: 1, resizeMode: 'cover' }}
-    >
+    <ImageBackground source={BG} style={{ flex: 1, resizeMode: 'cover' }}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -443,9 +476,11 @@ export default function OrbizTreatGame() {
         >
           {phase === 'start' && (
             <View style={styles.centerArea}>
-              <Image
-                source={require('../../assets/orbizImages/oboardimg1.png')}
-              />
+              {Platform.OS === 'ios' && (
+                <Image
+                  source={require('../../assets/orbizImages/oboardimg1.png')}
+                />
+              )}
               <ImageBackground
                 source={require('../../assets/orbizUi/orbizBoard.png')}
                 style={styles.orbizBoard}
@@ -477,7 +512,7 @@ export default function OrbizTreatGame() {
               </View>
               <Image
                 source={require('../../assets/orbizImages/gameBubble1.png')}
-                style={{ position: 'absolute', right: 0, top: 90 }}
+                style={{ position: 'absolute', right: -20, top: 190 }}
               />
               <Image
                 source={require('../../assets/orbizImages/gameBubble2.png')}
@@ -665,6 +700,7 @@ export default function OrbizTreatGame() {
                       fontSize: 20,
                       fontFamily: 'Sansation-Bold',
                       marginBottom: 120,
+                      textAlign: 'center',
                     }}
                   >
                     Tap Category once you are ready
@@ -775,10 +811,11 @@ export default function OrbizTreatGame() {
                         }}
                       >
                         <Image
+                          resizeMode="contain"
                           source={require('../../assets/orbizImages/timer.gif')}
                           style={{
-                            width: 150,
-                            height: 150,
+                            width: 155,
+                            height: 155,
                             marginTop: 30,
                             marginBottom: 30,
                           }}
@@ -963,24 +1000,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 4,
-    gap: 12,
+    gap: 10,
     justifyContent: 'center',
   },
   playerLabel: {
     color: '#fff',
     width: 72,
     fontFamily: 'Sansation-Bold',
-    fontSize: 18,
+    fontSize: 14,
   },
   nameInput: {
     backgroundColor: '#D9D9D9',
     width: 150,
     borderRadius: 12,
     paddingHorizontal: 12,
-    paddingVertical: Platform.OS === 'ios' ? 5 : 5,
+    paddingVertical: Platform.OS === 'ios' ? 5 : 2,
     borderWidth: 1,
     borderColor: '#D9D9D9',
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: 'Sansation-Bold',
     color: '#333333',
   },

@@ -11,9 +11,11 @@ import {
   View,
 } from 'react-native';
 
-const OrbizTreatOnboard = () => {
+const TreatOnboarding = () => {
   const [isCurrentViewIndex, setIsCurrentViewIndex] = useState(0);
   const nav = useNavigation();
+
+  const BG = require('../../assets/orbizImages/loaderBack.png');
 
   const orbizViews = [
     {
@@ -48,14 +50,11 @@ const OrbizTreatOnboard = () => {
   const onNextPress = () => {
     isCurrentViewIndex < 3
       ? setIsCurrentViewIndex(isCurrentViewIndex + 1)
-      : nav.navigate('OrbizTreatHome');
+      : nav.navigate('MainScreen');
   };
 
   return (
-    <ImageBackground
-      source={require('../../assets/orbizImages/orbizMainBack.png')}
-      style={{ flex: 1, resizeMode: 'cover' }}
-    >
+    <ImageBackground source={BG} style={{ flex: 1, resizeMode: 'cover' }}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -68,9 +67,9 @@ const OrbizTreatOnboard = () => {
               style={[
                 isCurrentViewIndex === 0 && { marginBottom: 30 },
                 Platform.OS === 'android' && {
-                  width: 259,
-                  height: 250,
-                  borderRadius: 50,
+                  width: 240,
+                  height: 240,
+                  borderRadius: 70,
                 },
               ]}
             />
@@ -132,19 +131,19 @@ const st = StyleSheet.create({
     paddingBottom: 30,
   },
   orbizTxt: {
-    fontSize: 22,
+    fontSize: 19,
     color: '#FFFFFF',
     textAlign: 'center',
     fontFamily: 'Sansation-Bold',
   },
   orbizSecTxt: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#FFFFFF',
     textAlign: 'center',
-    marginTop: 15,
+    marginTop: 8,
     fontFamily: 'Sansation-Regular',
     fontStyle: 'italic',
-    paddingHorizontal: 5,
+    paddingHorizontal: 2,
   },
   orbizBoard: {
     width: 359,
@@ -161,4 +160,4 @@ const st = StyleSheet.create({
   },
 });
 
-export default OrbizTreatOnboard;
+export default TreatOnboarding;

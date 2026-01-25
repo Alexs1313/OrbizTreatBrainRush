@@ -8,8 +8,10 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import CustomRoundButton from '../components/CustomRoundButton';
-import { useOrbizTreatStore } from '../storage/orbizTreatContext';
+import CustomRoundButton from '../[components]/CustomRoundButton';
+import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
+
+const BG = require('../../assets/orbizImages/loaderBack.png');
 
 const orbizAchievements = [
   {
@@ -39,7 +41,7 @@ const orbizAchievements = [
   {
     id: 5,
     achttl: 'Watermelon Brain',
-    achsbttl: 'Complete a Hard-level task successfully.',
+    achsbttl: 'Complete a Hard-level task.',
     achicon: require('../../assets/orbizImages/watermelon.png'),
   },
   {
@@ -56,13 +58,11 @@ export default function AchievementsScreen({ navigation }) {
   const isUnlocked = id => unlockedIds.includes(id);
 
   return (
-    <ImageBackground
-      source={require('../../assets/orbizImages/orbizMainBack.png')}
-      style={styl.bg}
-    >
+    <ImageBackground source={BG} style={styl.bg}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
+        bounces={false}
       >
         <View style={styl.container}>
           <Text style={styl.title}>Achievements</Text>
@@ -151,23 +151,23 @@ const styl = StyleSheet.create({
   cardInner: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
   },
-  icon: { width: 90, height: 90, resizeMode: 'contain' },
+  icon: { width: 80, height: 80, resizeMode: 'contain' },
   iconLocked: { tintColor: 'rgba(0,0,0,0.55)' },
   achTitle: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Sansation-Bold',
     textAlign: 'center',
     marginTop: 6,
   },
   achSub: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 11,
     textAlign: 'center',
-    marginTop: 6,
+    marginTop: 5,
     fontFamily: 'Sansation-Regular',
   },
   bottomRow: {

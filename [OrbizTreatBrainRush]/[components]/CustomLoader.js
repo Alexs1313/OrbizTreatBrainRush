@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 const CustomLoader = () => {
-  const go = useNavigation();
+  const navigation = useNavigation();
 
   const welcomeLoaderHTML = `
 <!DOCTYPE html>
@@ -49,9 +49,11 @@ const CustomLoader = () => {
   `;
 
   useEffect(() => {
-    setTimeout(() => {
-      go.replace('OrbizTreatOnboard');
+    const timer = setTimeout(() => {
+      navigation.replace('TreatOnboarding');
     }, 5000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -70,9 +72,9 @@ const CustomLoader = () => {
             source={require('../../assets/orbizImages/icon.png')}
             style={{
               marginBottom: 50,
-              width: 300,
-              height: 300,
-              borderRadius: 50,
+              width: 240,
+              height: 240,
+              borderRadius: 70,
             }}
           />
         ) : (
