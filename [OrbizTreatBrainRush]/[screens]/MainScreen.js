@@ -22,7 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Sound from 'react-native-sound';
 import Orientation from 'react-native-orientation-locker';
 
-const BG = require('../../assets/orbizImages/loaderBack.png');
+const BG = require('../../assets/orbizImages/orbizMainBack.png');
 
 const MainScreen = () => {
   const [showRules, setShowRules] = useState(false);

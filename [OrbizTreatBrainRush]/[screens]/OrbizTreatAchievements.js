@@ -11,7 +11,7 @@ import {
 import CustomRoundButton from '../[components]/CustomRoundButton';
 import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
 
-const BG = require('../../assets/orbizImages/loaderBack.png');
+const BG = require('../../assets/orbizImages/orbizMainBack.png');
 
 const orbizAchievements = [
   {
@@ -85,10 +85,6 @@ export default function AchievementsScreen({ navigation }) {
 
                     <Text style={styl.achTitle}>{achieve.achttl}</Text>
                     <Text style={styl.achSub}>{achieve.achsbttl}</Text>
-
-                    {!unlocked && (
-                      <View style={styl.lockOverlay} pointerEvents="none" />
-                    )}
                   </View>
                 </ImageBackground>
               );

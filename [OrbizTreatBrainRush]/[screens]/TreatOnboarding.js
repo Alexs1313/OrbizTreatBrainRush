@@ -15,7 +15,7 @@ const TreatOnboarding = () => {
   const [isCurrentViewIndex, setIsCurrentViewIndex] = useState(0);
   const nav = useNavigation();
 
-  const BG = require('../../assets/orbizImages/loaderBack.png');
+  const BG = require('../../assets/orbizImages/orbizMainBack.png');
 
   const orbizViews = [
     {

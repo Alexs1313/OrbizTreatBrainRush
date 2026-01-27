@@ -19,7 +19,7 @@ import CustomRoundButton from '../[components]/CustomRoundButton';
 import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
 import { orbizGameTasks } from '../[data]/orbizGameTasks';
 
-const BG = require('../../assets/orbizImages/loaderBack.png');
+const BG = require('../../assets/orbizImages/orbizMainBack.png');
 
 const gameOrbs = {
   easy: {
@@ -821,7 +821,9 @@ export default function OrbizTreatGame() {
                           }}
                         />
 
-                        <Text style={styles.timerTx}>{timerSeconds}</Text>
+                        {Platform.OS === 'android' && (
+                          <Text style={styles.timerTx}>{timerSeconds}</Text>
+                        )}
                       </View>
                     )}
                   </>
