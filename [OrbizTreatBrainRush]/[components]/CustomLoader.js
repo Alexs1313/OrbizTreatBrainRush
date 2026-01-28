@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 const CustomLoader = () => {
   const navigation = useNavigation();
 
-  const welcomeLoaderHTML = `
+  const welcomesLoaderHTML = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -96,7 +96,7 @@ const CustomLoader = () => {
       <View style={styles.loaderWrapper}>
         <WebView
           originWhitelist={['*']}
-          source={{ html: welcomeLoaderHTML }}
+          source={{ html: welcomesLoaderHTML }}
           style={{ width: 220, height: 90, backgroundColor: 'transparent' }}
           scrollEnabled={false}
         />
