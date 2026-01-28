@@ -1,12 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// stack screens import
-
-import OrbizTreatGame from '../[screens]/OrbizTreatGame';
-import OrbizTreatAchievements from '../[screens]/OrbizTreatAchievements';
-import CustomLoader from '../[components]/CustomLoader';
-import MainScreen from '../[screens]/MainScreen';
-import TreatOnboarding from '../[screens]/TreatOnboarding';
+import OrbizTreatGame from '../_0xTrtScrnS/OrbizTreatGame';
+import OrbizTreatAchievements from '../_0xTrtScrnS/OrbizTreatAchievements';
+import CustomLoader from '../_0xTrtCmpN/CustomLoader';
+import MainScreen from '../_0xTrtScrnS/MainScreen';
+import TreatOnboarding from '../_0xTrtScrnS/TreatOnboarding';
 
 const Stack = createNativeStackNavigator();
 

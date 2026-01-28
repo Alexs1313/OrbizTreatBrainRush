@@ -58,7 +58,7 @@ const CustomLoader = () => {
 
   return (
     <ImageBackground
-      source={require('../../assets/orbizImages/loaderBack.png')}
+      source={require('../../assets/orbizImages/orbizMainBack.png')}
       style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
     >
       <Image
@@ -80,7 +80,7 @@ const CustomLoader = () => {
         ) : (
           <Image
             source={require('../../assets/orbizImages/oboardimg1.png')}
-            style={{ marginBottom: 50 }}
+            style={{ marginBottom: 50, width: 350, height: 280 }}
           />
         )}
         <Image

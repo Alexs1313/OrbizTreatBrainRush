@@ -4,16 +4,16 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
-      app_store_connect: OrbizTreatBrainRushAPIKey
+      app_store_connect: OrbizBrainRushTreatKey
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.OrbizTreatBrainRush
+        bundle_identifier: com.OrbizBrainRushTreat
       vars:
-        BUNDLE_ID: com.OrbizTreatBrainRush
+        BUNDLE_ID: com.OrbizBrainRushTreat
         XCODE_WORKSPACE: OrbizTreatBrainRush.xcworkspace
         XCODE_SCHEME: OrbizTreatBrainRush
-        APP_STORE_APPLE_ID: 6757544059
+        APP_STORE_APPLE_ID: 6758398371
     scripts:
       - name: Install npm dependencies
         script: |
