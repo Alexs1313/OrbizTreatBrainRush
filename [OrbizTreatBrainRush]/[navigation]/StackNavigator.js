@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import OrbizTreatGame from '../[screens]/OrbizTreatGame';
 import OrbizTreatAchievements from '../[screens]/OrbizTreatAchievements';
-import CustomLoader from '../[components]/CustomLoader';
+import CustomLoader from '../[comp/CustomLoader';
 import MainScreen from '../[screens]/MainScreen';
 import TreatOnboarding from '../[screens]/TreatOnboarding';
 

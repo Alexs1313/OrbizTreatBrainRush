@@ -8,7 +8,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import CustomRoundButton from '../[components]/CustomRoundButton';
+import CustomRoundButton from '../[comp/CustomRoundButton';
 import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
 
 const BG = require('../../assets/orbizImages/orbizMainBack.png');

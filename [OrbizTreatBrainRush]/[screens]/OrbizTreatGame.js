@@ -15,7 +15,7 @@ import Toast from 'react-native-toast-message';
 
 // my local imports ---------------------------------->
 
-import CustomRoundButton from '../[components]/CustomRoundButton';
+import CustomRoundButton from '../[comp/CustomRoundButton';
 import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
 import { orbizGameTasks } from '../[data]/orbizGameTasks';
 

@@ -13,8 +13,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import CustomRoundButton from '../[components]/CustomRoundButton';
-import CustomMenuButton from '../[components]/CustomMenuButton';
+import CustomRoundButton from '../[comp/CustomRoundButton';
+import CustomMenuButton from '../[comp/CustomMenuButton';
 import { BlurView } from '@react-native-community/blur';
 import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
 import Toast from 'react-native-toast-message';
