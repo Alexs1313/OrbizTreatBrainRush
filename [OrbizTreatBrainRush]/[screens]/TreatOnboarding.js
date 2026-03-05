@@ -19,36 +19,42 @@ const TreatOnboarding = () => {
 
   const orbizViews = [
     {
-      orbizttl: 'Welcome to Orbiz Treat BrainRush',
+      orbizttl: 'Orb Party Mode — Play Together',
       orbizdesc:
-        'A fast and fun party game where every challenge lasts just 10 seconds. Get ready to think quick and play even quicker.',
+        'Challenge your friends in fast rounds where everyone thinks quickly and votes for the correct answer.',
       orbizimg:
         Platform.OS === 'ios'
-          ? require('../../assets/orbizImages/oboardimg1.png')
+          ? require('../../assets/orbizImages/oboardimg2.png')
           : require('../../assets/orbizImages/icon.png'),
     },
     {
-      orbizttl: 'Play Your Way',
+      orbizttl: 'Sequence Lab — Solo Mode',
       orbizdesc:
-        'Pick a difficulty manually or let the Random Orb choose for you. Every round feels different, surprising, and exciting.',
-      orbizimg: require('../../assets/orbizImages/oboardimg2.png'),
+        'Test your logic and focus by finding the odd item in each sequence before time runs out.',
+      orbizimg: require('../../assets/orbizImages/oboardimg1.png'),
     },
     {
-      orbizttl: 'Complete the Challenge in 10 Seconds',
+      orbizttl: 'Every Round Is Timed',
       orbizdesc:
-        'Answer fast, vote as a group, and earn points each round. Easy, Medium, or Hard — the tougher the task, the more points you get.',
+        'Both modes are fast-paced, giving you only a limited time to think and answer.',
       orbizimg: require('../../assets/orbizImages/oboardimg3.png'),
     },
     {
-      orbizttl: 'Climb the Scoreboard and Unlock Orbiz',
+      orbizttl: 'Unlock Achievements',
       orbizdesc:
-        'Finish all rounds to see the final results and unlock special achievement orbs as you progress through the game.',
+        'A system of achievements with progress bars helps you track your progress as you play.',
       orbizimg: require('../../assets/orbizImages/oboardimg4.png'),
+    },
+    {
+      orbizttl: 'Climb the Leaderboard',
+      orbizdesc:
+        'Track the best scores in Party Mode and Sequence Lab and see how high you can climb.',
+      orbizimg: require('../../assets/orbizImages/oboardimg5.png'),
     },
   ];
 
   const onNextPress = () => {
-    isCurrentViewIndex < 3
+    isCurrentViewIndex < 4
       ? setIsCurrentViewIndex(isCurrentViewIndex + 1)
       : nav.navigate('MainScreen');
   };
@@ -73,7 +79,7 @@ const TreatOnboarding = () => {
                 },
               ]}
             />
-            {isCurrentViewIndex === 0 && (
+            {isCurrentViewIndex === 1 && (
               <>
                 <Image
                   source={require('../../assets/orbizImages/bubble1.png')}

@@ -67,22 +67,6 @@ const CustomLoader = () => {
       />
 
       <View>
-        {Platform.OS === 'android' ? (
-          <Image
-            source={require('../../assets/orbizImages/icon.png')}
-            style={{
-              marginBottom: 50,
-              width: 240,
-              height: 240,
-              borderRadius: 70,
-            }}
-          />
-        ) : (
-          <Image
-            source={require('../../assets/orbizImages/oboardimg1.png')}
-            style={{ marginBottom: 50 }}
-          />
-        )}
         <Image
           source={require('../../assets/orbizImages/easyOrb.png')}
           style={{
