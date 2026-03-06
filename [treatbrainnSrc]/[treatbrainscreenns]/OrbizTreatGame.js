@@ -1,5 +1,9 @@
+// orbiz game // modes selection screen
+
+import Toast from 'react-native-toast-message';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   View,
   Text,
   TextInput,
@@ -11,13 +15,13 @@ import {
   Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
 
 // my local imports ---------------------------------->
 
-import CustomRoundButton from '../[components]/CustomRoundButton';
-import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
-import { orbizGameTasks } from '../[data]/orbizGameTasks';
+import CustomRoundButton from '../[treatbraincmppnts]/CustomRoundButton';
+import { useOrbizTreatStore } from '../[treatbrainstoragge]/orbizTreatContext';
+import { orbizGameTasks } from '../[treatbraindatta]/orbizGameTasks';
+import { addOrbPartyResults } from '../[treatbrainstoragge]/leaderboardStorage';
 
 const BG = require('../../assets/orbizImages/orbizMainBack.png');
 
@@ -42,7 +46,8 @@ const gameOrbs = {
 const DEFAULT_PLAYERS = 2;
 const MAX_PLAYERS = 7;
 const ALLOWED_ROUNDS = [5, 10, 15, 20];
-const MODES = ['Manual', 'Mystery Orb'];
+const MODES = ['Direct Select', 'Mystery Orb'];
+const ORB_DIFFICULTIES = ['easy', 'medium', 'hard'];
 
 export default function OrbizTreatGame() {
   const navigation = useNavigation();
@@ -52,12 +57,11 @@ export default function OrbizTreatGame() {
   const [phase, setPhase] = useState('start');
   const [playerCount, setPlayerCount] = useState(DEFAULT_PLAYERS);
   const [rounds, setRounds] = useState(ALLOWED_ROUNDS[0]);
-  const [mode, setMode] = useState(MODES[0]);
+  const [mode, setMode] = useState('Mystery Orb');
   const [players, setPlayers] = useState([]);
   const [currentRound, setCurrentRound] = useState(1);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [chosenOrb, setChosenOrb] = useState(null);
-  const [revealSelected, setRevealSelected] = useState(false);
   const [showQuestionSection, setShowQuestionSection] = useState(false);
   const [currentTask, setCurrentTask] = useState(null);
   const [timerSeconds, setTimerSeconds] = useState(10);
@@ -65,7 +69,6 @@ export default function OrbizTreatGame() {
   const [optionsVisible, setOptionsVisible] = useState(false);
   const [spinAnimating, setSpinAnimating] = useState(false);
   const [spinPreview, setSpinPreview] = useState('easy');
-  const [confettiVisible, setConfettiVisible] = useState(false);
   const [winVisible, setWinVisible] = useState(false);
   const [nameErrors, setNameErrors] = useState({});
 
@@ -73,8 +76,29 @@ export default function OrbizTreatGame() {
   const delayRef = useRef(null);
   const timerRef = useRef(null);
   const spinIntervalRef = useRef(null);
-  const confettiTimeoutRef = useRef(null);
   const winTimeoutRef = useRef(null);
+  const startButtonScale = useRef(new Animated.Value(1)).current;
+  const orbPressScales = useRef({
+    easy: new Animated.Value(1),
+    medium: new Animated.Value(1),
+    hard: new Animated.Value(1),
+  }).current;
+  const roundButtonScales = useRef({
+    startHome: new Animated.Value(1),
+    setupPlay: new Animated.Value(1),
+    setupHome: new Animated.Value(1),
+    namesPlay: new Animated.Value(1),
+
+    namesHome: new Animated.Value(1),
+
+    optionsNo: new Animated.Value(1),
+    optionsYes: new Animated.Value(1),
+    mysteryPlay: new Animated.Value(1),
+    playingHome: new Animated.Value(1),
+    intermediateNext: new Animated.Value(1),
+    intermediateHome: new Animated.Value(1),
+    resultsHome: new Animated.Value(1),
+  }).current;
 
   const { recordRound, recordGameCompleted, isEnabledNotifications } =
     useOrbizTreatStore();
@@ -116,10 +140,6 @@ export default function OrbizTreatGame() {
     if (spinIntervalRef.current) {
       clearInterval(spinIntervalRef.current);
       spinIntervalRef.current = null;
-    }
-    if (confettiTimeoutRef.current) {
-      clearTimeout(confettiTimeoutRef.current);
-      confettiTimeoutRef.current = null;
     }
     if (winTimeoutRef.current) {
       clearTimeout(winTimeoutRef.current);
@@ -163,7 +183,6 @@ export default function OrbizTreatGame() {
 
   const resetTurnState = () => {
     setChosenOrb(null);
-    setRevealSelected(false);
     setShowQuestionSection(false);
     setCurrentTask(null);
     setTimerSeconds(10);
@@ -172,7 +191,7 @@ export default function OrbizTreatGame() {
     clearGameTimers();
   };
 
-  const startTimer = () => {
+  const goOrbsTimer = () => {
     setTimerRunning(true);
     setTimerSeconds(10);
     let seconds = 10;
@@ -195,28 +214,9 @@ export default function OrbizTreatGame() {
 
   const handleSpin = () => {
     if (spinAnimating || timerRunning || showQuestionSection) return;
-
-    setSpinAnimating(true);
-
-    const difficulties = ['easy', 'medium', 'hard'];
-    let currentIndex = 0;
-
-    spinIntervalRef.current = setInterval(() => {
-      setSpinPreview(difficulties[currentIndex % 3]);
-      currentIndex++;
-    }, 80);
-
-    setTimeout(() => {
-      if (spinIntervalRef.current) {
-        clearInterval(spinIntervalRef.current);
-        spinIntervalRef.current = null;
-      }
-
-      const randomDifficulty = difficulties[Math.floor(Math.random() * 3)];
-      setSpinPreview(randomDifficulty);
-      setSpinAnimating(false);
-      selectOrb(randomDifficulty);
-    }, 1200);
+    const randomDifficulty =
+      ORB_DIFFICULTIES[Math.floor(Math.random() * ORB_DIFFICULTIES.length)];
+    selectOrb(randomDifficulty);
   };
 
   const handleDecision = accepted => {
@@ -243,22 +243,11 @@ export default function OrbizTreatGame() {
         });
       }
 
-      console.log('confetti!!');
-      setConfettiVisible(true);
-
       if (isEnabledNotifications) {
         Toast.show({ text1: 'Great job! You earned points.' });
       }
 
-      if (confettiTimeoutRef.current) {
-        clearTimeout(confettiTimeoutRef.current);
-      }
-
-      confettiTimeoutRef.current = setTimeout(() => {
-        setConfettiVisible(false);
-        confettiTimeoutRef.current = null;
-        advanceTurn();
-      }, 1800);
+      advanceTurn();
     } else {
       if (recordRound) {
         recordRound({
@@ -283,6 +272,7 @@ export default function OrbizTreatGame() {
         if (recordGameCompleted) {
           recordGameCompleted();
         }
+        addOrbPartyResults(players).catch(() => {});
         setPhase('results');
       } else {
         setPhase('intermediate');
@@ -352,28 +342,143 @@ export default function OrbizTreatGame() {
   const selectOrb = difficulty => {
     if (timerRunning || showQuestionSection || spinAnimating) return;
 
-    setChosenOrb(difficulty);
-    setRevealSelected(true);
+    if (mode === 'Direct Select') {
+      if (spinIntervalRef.current) {
+        clearInterval(spinIntervalRef.current);
+        spinIntervalRef.current = null;
+      }
+      if (delayRef.current) {
+        clearTimeout(delayRef.current);
+        delayRef.current = null;
+      }
+
+      setSpinPreview(difficulty);
+      setChosenOrb(difficulty);
+      setSpinAnimating(false);
+
+      const task = pickRandomTask(difficulty);
+      setCurrentTask(task);
+      setShowQuestionSection(true);
+      setOptionsVisible(false);
+      goOrbsTimer();
+      return;
+    }
+
+    const startIndex = ORB_DIFFICULTIES.indexOf(spinPreview);
+    let currentIndex = startIndex >= 0 ? startIndex : 0;
+
+    setSpinAnimating(true);
+    setChosenOrb(null);
     setShowQuestionSection(false);
     setCurrentTask(null);
     setOptionsVisible(false);
+
+    if (spinIntervalRef.current) {
+      clearInterval(spinIntervalRef.current);
+      spinIntervalRef.current = null;
+    }
 
     if (delayRef.current) {
       clearTimeout(delayRef.current);
       delayRef.current = null;
     }
 
+    spinIntervalRef.current = setInterval(() => {
+      currentIndex = (currentIndex + 1) % ORB_DIFFICULTIES.length;
+      setSpinPreview(ORB_DIFFICULTIES[currentIndex]);
+    }, 90);
+
     delayRef.current = setTimeout(() => {
-      setRevealSelected(false);
+      if (spinIntervalRef.current) {
+        clearInterval(spinIntervalRef.current);
+        spinIntervalRef.current = null;
+      }
 
-      const task = pickRandomTask(difficulty);
-      setCurrentTask(task);
-      setShowQuestionSection(true);
-      setOptionsVisible(false);
+      setSpinPreview(difficulty);
+      setChosenOrb(difficulty);
+      setSpinAnimating(false);
 
-      startTimer();
-      delayRef.current = null;
-    }, 2500);
+      delayRef.current = setTimeout(() => {
+        const task = pickRandomTask(difficulty);
+        setCurrentTask(task);
+        setShowQuestionSection(true);
+        setOptionsVisible(false);
+
+        goOrbsTimer();
+        delayRef.current = null;
+      }, 1500);
+    }, 950);
+  };
+
+  const getOrbRowOrder = centerDifficulty => {
+    const centerIndex = ORB_DIFFICULTIES.indexOf(centerDifficulty);
+    if (centerIndex < 0) return ORB_DIFFICULTIES;
+    const left = ORB_DIFFICULTIES[(centerIndex + 2) % ORB_DIFFICULTIES.length];
+    const right = ORB_DIFFICULTIES[(centerIndex + 1) % ORB_DIFFICULTIES.length];
+    return [left, centerDifficulty, right];
+  };
+
+  const onStartSetupPress = () => {
+    setPhase('setup');
+    if (isEnabledNotifications) {
+      Toast.show({
+        text1: 'Game setup started! Choose your settings.',
+      });
+    }
+  };
+
+  const animateStartPressIn = () => {
+    Animated.spring(startButtonScale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+      friction: 8,
+      tension: 120,
+    }).start();
+  };
+
+  const animateStartPressOut = () => {
+    Animated.spring(startButtonScale, {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 7,
+      tension: 100,
+    }).start();
+  };
+
+  const animateOrbPressIn = difficulty => {
+    Animated.spring(orbPressScales[difficulty], {
+      toValue: 0.93,
+      useNativeDriver: true,
+      friction: 8,
+      tension: 120,
+    }).start();
+  };
+
+  const animateOrbPressOut = difficulty => {
+    Animated.spring(orbPressScales[difficulty], {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 7,
+      tension: 100,
+    }).start();
+  };
+
+  const animateRoundButtonPressIn = key => {
+    Animated.spring(roundButtonScales[key], {
+      toValue: 0.93,
+      useNativeDriver: true,
+      friction: 8,
+      tension: 120,
+    }).start();
+  };
+
+  const animateRoundButtonPressOut = key => {
+    Animated.spring(roundButtonScales[key], {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 7,
+      tension: 100,
+    }).start();
   };
 
   const currentPlayer = players[currentPlayerIndex] || { name: '' };
@@ -436,21 +541,54 @@ export default function OrbizTreatGame() {
         <View style={{ alignItems: 'center', marginTop: 12 }}>
           {phase === 'intermediate' ? (
             <View style={{ gap: 15, top: -40 }}>
-              <CustomRoundButton
-                onPress={onNextRound}
-                btnImage={require('../../assets/orbizImages/orbizPlay.png')}
-              />
-              <CustomRoundButton
-                onPress={() => navigation.goBack()}
-                btnImage={require('../../assets/orbizImages/homeicon.png')}
-              />
+              <Animated.View
+                style={{
+                  transform: [{ scale: roundButtonScales.intermediateNext }],
+                }}
+              >
+                <CustomRoundButton
+                  onPress={onNextRound}
+                  onPressIn={() =>
+                    animateRoundButtonPressIn('intermediateNext')
+                  }
+                  onPressOut={() =>
+                    animateRoundButtonPressOut('intermediateNext')
+                  }
+                  iconStyle={2}
+                  btnImage={require('../../assets/orbizImages/orbizPlay.png')}
+                />
+              </Animated.View>
+              <Animated.View
+                style={{
+                  transform: [{ scale: roundButtonScales.intermediateHome }],
+                }}
+              >
+                <CustomRoundButton
+                  onPress={() => navigation.goBack()}
+                  onPressIn={() =>
+                    animateRoundButtonPressIn('intermediateHome')
+                  }
+                  onPressOut={() =>
+                    animateRoundButtonPressOut('intermediateHome')
+                  }
+                  btnImage={require('../../assets/orbizImages/homeicon.png')}
+                />
+              </Animated.View>
             </View>
           ) : (
             <View style={{ top: -40 }}>
-              <CustomRoundButton
-                onPress={() => navigation.goBack()}
-                btnImage={require('../../assets/orbizImages/homeicon.png')}
-              />
+              <Animated.View
+                style={{
+                  transform: [{ scale: roundButtonScales.resultsHome }],
+                }}
+              >
+                <CustomRoundButton
+                  onPress={() => navigation.goBack()}
+                  onPressIn={() => animateRoundButtonPressIn('resultsHome')}
+                  onPressOut={() => animateRoundButtonPressOut('resultsHome')}
+                  btnImage={require('../../assets/orbizImages/homeicon.png')}
+                />
+              </Animated.View>
             </View>
           )}
         </View>
@@ -478,7 +616,8 @@ export default function OrbizTreatGame() {
             <View style={styles.centerArea}>
               {Platform.OS === 'ios' && (
                 <Image
-                  source={require('../../assets/orbizImages/oboardimg1.png')}
+                  source={require('../../assets/orbizImages/orbztrtorpartyintr.png')}
+                  style={{ marginTop: 30 }}
                 />
               )}
               <ImageBackground
@@ -494,21 +633,36 @@ export default function OrbizTreatGame() {
                   </Text>
                 </View>
               </ImageBackground>
-              <View style={{ gap: 15, top: -40 }}>
-                <CustomRoundButton
-                  onPress={() => {
-                    setPhase('setup');
-                    if (isEnabledNotifications)
-                      Toast.show({
-                        text1: 'Game setup started! Choose your settings.',
-                      });
+              <View style={{ gap: 15, marginTop: 12, alignItems: 'center' }}>
+                <Animated.View
+                  style={{ transform: [{ scale: startButtonScale }] }}
+                >
+                  <TouchableOpacity
+                    onPress={onStartSetupPress}
+                    onPressIn={animateStartPressIn}
+                    onPressOut={animateStartPressOut}
+                    activeOpacity={0.9}
+                  >
+                    <ImageBackground
+                      source={require('../../assets/orbizImages/orbztrtonbtn.png')}
+                      style={styles.startActionButton}
+                    >
+                      <Text style={styles.startActionButtonTxt}>Start</Text>
+                    </ImageBackground>
+                  </TouchableOpacity>
+                </Animated.View>
+                <Animated.View
+                  style={{
+                    transform: [{ scale: roundButtonScales.startHome }],
                   }}
-                  btnImage={require('../../assets/orbizImages/orbizPlay.png')}
-                />
-                <CustomRoundButton
-                  onPress={() => navigation.goBack()}
-                  btnImage={require('../../assets/orbizImages/homeicon.png')}
-                />
+                >
+                  <CustomRoundButton
+                    onPress={() => navigation.goBack()}
+                    onPressIn={() => animateRoundButtonPressIn('startHome')}
+                    onPressOut={() => animateRoundButtonPressOut('startHome')}
+                    btnImage={require('../../assets/orbizImages/homeicon.png')}
+                  />
+                </Animated.View>
               </View>
               <Image
                 source={require('../../assets/orbizImages/gameBubble1.png')}
@@ -607,14 +761,31 @@ export default function OrbizTreatGame() {
                 </View>
               </ImageBackground>
               <View style={{ gap: 15, top: -40 }}>
-                <CustomRoundButton
-                  onPress={goToNames}
-                  btnImage={require('../../assets/orbizImages/orbizPlay.png')}
-                />
-                <CustomRoundButton
-                  onPress={() => navigation.goBack()}
-                  btnImage={require('../../assets/orbizImages/homeicon.png')}
-                />
+                <Animated.View
+                  style={{
+                    transform: [{ scale: roundButtonScales.setupPlay }],
+                  }}
+                >
+                  <CustomRoundButton
+                    onPress={goToNames}
+                    onPressIn={() => animateRoundButtonPressIn('setupPlay')}
+                    onPressOut={() => animateRoundButtonPressOut('setupPlay')}
+                    btnImage={require('../../assets/orbizImages/orbizPlay.png')}
+                    iconStyle={2}
+                  />
+                </Animated.View>
+                <Animated.View
+                  style={{
+                    transform: [{ scale: roundButtonScales.setupHome }],
+                  }}
+                >
+                  <CustomRoundButton
+                    onPress={() => navigation.goBack()}
+                    onPressIn={() => animateRoundButtonPressIn('setupHome')}
+                    onPressOut={() => animateRoundButtonPressOut('setupHome')}
+                    btnImage={require('../../assets/orbizImages/homeicon.png')}
+                  />
+                </Animated.View>
               </View>
             </View>
           )}
@@ -669,19 +840,36 @@ export default function OrbizTreatGame() {
                 </View>
               </ImageBackground>
               <View style={{ gap: 15, top: -40 }}>
-                <CustomRoundButton
-                  onPress={handlePlayOrbizGame}
-                  btnImage={require('../../assets/orbizImages/orbizPlay.png')}
-                  isDisabled={!canProceedFromNames()}
-                  width={53}
-                  height={53}
-                />
-                <CustomRoundButton
-                  onPress={() => navigation.goBack()}
-                  btnImage={require('../../assets/orbizImages/homeicon.png')}
-                  width={53}
-                  height={53}
-                />
+                <Animated.View
+                  style={{
+                    transform: [{ scale: roundButtonScales.namesPlay }],
+                  }}
+                >
+                  <CustomRoundButton
+                    onPress={handlePlayOrbizGame}
+                    onPressIn={() => animateRoundButtonPressIn('namesPlay')}
+                    onPressOut={() => animateRoundButtonPressOut('namesPlay')}
+                    btnImage={require('../../assets/orbizImages/orbizPlay.png')}
+                    isDisabled={!canProceedFromNames()}
+                    width={53}
+                    height={53}
+                    iconStyle={2}
+                  />
+                </Animated.View>
+                <Animated.View
+                  style={{
+                    transform: [{ scale: roundButtonScales.namesHome }],
+                  }}
+                >
+                  <CustomRoundButton
+                    onPress={() => navigation.goBack()}
+                    onPressIn={() => animateRoundButtonPressIn('namesHome')}
+                    onPressOut={() => animateRoundButtonPressOut('namesHome')}
+                    btnImage={require('../../assets/orbizImages/homeicon.png')}
+                    width={53}
+                    height={53}
+                  />
+                </Animated.View>
               </View>
             </View>
           )}
@@ -706,54 +894,95 @@ export default function OrbizTreatGame() {
                     Tap Category once you are ready
                   </Text>
                 )}
+              {!showQuestionSection &&
+                !currentTask &&
+                mode === 'Mystery Orb' && (
+                  <Text
+                    style={{
+                      color: '#2B2B2B',
+                      fontSize: 20,
+                      fontFamily: 'Sansation-Bold',
+                      marginBottom: 120,
+                      textAlign: 'center',
+                    }}
+                  >
+                    Tap Play once you are ready
+                  </Text>
+                )}
               <View style={styles.orbRow}>
-                {!chosenOrb ? (
+                {!showQuestionSection ? (
                   <>
-                    <View style={styles.orbColumn}>
-                      <TouchableOpacity
-                        onPress={() => selectOrb('easy')}
-                        style={styles.smallOrbWrap}
-                        disabled={mode === 'Mystery Orb'}
-                      >
-                        <Image
-                          source={gameOrbs.easy.img}
-                          style={styles.centerOrbImg}
-                        />
-                      </TouchableOpacity>
-                      {mode !== 'Mystery Orb' && (
-                        <Text style={styles.orbLabel}>Easy</Text>
-                      )}
-                    </View>
-                    <View style={styles.orbColumn}>
-                      <TouchableOpacity
-                        onPress={() => selectOrb('medium')}
-                        style={styles.centerOrbWrap}
-                        disabled={mode === 'Mystery Orb'}
-                      >
-                        <Image
-                          source={gameOrbs.medium.img}
-                          style={styles.centerOrbImg}
-                        />
-                      </TouchableOpacity>
-                      {mode !== 'Mystery Orb' && (
-                        <Text style={styles.orbLabel}>Medium</Text>
-                      )}
-                    </View>
-                    <View style={styles.orbColumn}>
-                      <TouchableOpacity
-                        onPress={() => selectOrb('hard')}
-                        style={styles.smallOrbWrap}
-                        disabled={mode === 'Mystery Orb'}
-                      >
-                        <Image
-                          source={gameOrbs.hard.img}
-                          style={styles.centerOrbImg}
-                        />
-                      </TouchableOpacity>
-                      {mode !== 'Mystery Orb' && (
-                        <Text style={styles.orbLabel}>Hard</Text>
-                      )}
-                    </View>
+                    {!chosenOrb &&
+                      getOrbRowOrder(spinPreview).map((difficulty, index) => {
+                        const isCenter = index === 1;
+                        const shouldHighlightCenter = spinAnimating && isCenter;
+                        return (
+                          <View
+                            key={`orb-${difficulty}-${index}`}
+                            style={styles.orbColumn}
+                          >
+                            <Animated.View
+                              style={{
+                                transform: [
+                                  { scale: orbPressScales[difficulty] },
+                                ],
+                              }}
+                            >
+                              <TouchableOpacity
+                                onPress={() => selectOrb(difficulty)}
+                                onPressIn={() => animateOrbPressIn(difficulty)}
+                                onPressOut={() =>
+                                  animateOrbPressOut(difficulty)
+                                }
+                                style={
+                                  shouldHighlightCenter
+                                    ? styles.centerOrbWrap
+                                    : styles.smallOrbWrap
+                                }
+                                disabled={
+                                  mode === 'Mystery Orb' || spinAnimating
+                                }
+                              >
+                                <Image
+                                  source={gameOrbs[difficulty].img}
+                                  style={
+                                    shouldHighlightCenter
+                                      ? styles.centerOrbImg
+                                      : styles.smallOrbImg
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Animated.View>
+                            {mode !== 'Mystery Orb' && (
+                              <Text style={styles.orbLabel}>
+                                {gameOrbs[difficulty].label}
+                              </Text>
+                            )}
+                          </View>
+                        );
+                      })}
+                    {chosenOrb &&
+                      getOrbRowOrder(chosenOrb).map((difficulty, index) => {
+                        const isSelected = difficulty === chosenOrb;
+                        return (
+                          <View
+                            key={`selected-orb-${difficulty}-${index}`}
+                            style={styles.orbColumn}
+                          >
+                            <Image
+                              source={gameOrbs[difficulty].img}
+                              style={
+                                isSelected
+                                  ? styles.selectedCenterOrbImg
+                                  : styles.unselectedOrbImg
+                              }
+                            />
+                            <Text style={styles.orbLabel}>
+                              {gameOrbs[difficulty].label}
+                            </Text>
+                          </View>
+                        );
+                      })}
                   </>
                 ) : (
                   !showQuestionSection && <View />
@@ -771,7 +1000,7 @@ export default function OrbizTreatGame() {
                       >
                         <View
                           style={{
-                            paddingHorizontal: 25,
+                            paddingHorizontal: 35,
                             alignItems: 'center',
                             width: '100%',
                           }}
@@ -791,14 +1020,42 @@ export default function OrbizTreatGame() {
                             justifyContent: 'center',
                           }}
                         >
-                          <CustomRoundButton
-                            onPress={() => handleDecision(false)}
-                            btnImage={require('../../assets/orbizImages/noIcon.png')}
-                          />
-                          <CustomRoundButton
-                            onPress={() => handleDecision(true)}
-                            btnImage={require('../../assets/orbizImages/yesIcon.png')}
-                          />
+                          <Animated.View
+                            style={{
+                              transform: [
+                                { scale: roundButtonScales.optionsNo },
+                              ],
+                            }}
+                          >
+                            <CustomRoundButton
+                              onPress={() => handleDecision(false)}
+                              onPressIn={() =>
+                                animateRoundButtonPressIn('optionsNo')
+                              }
+                              onPressOut={() =>
+                                animateRoundButtonPressOut('optionsNo')
+                              }
+                              btnImage={require('../../assets/orbizImages/noIcon.png')}
+                            />
+                          </Animated.View>
+                          <Animated.View
+                            style={{
+                              transform: [
+                                { scale: roundButtonScales.optionsYes },
+                              ],
+                            }}
+                          >
+                            <CustomRoundButton
+                              onPress={() => handleDecision(true)}
+                              onPressIn={() =>
+                                animateRoundButtonPressIn('optionsYes')
+                              }
+                              onPressOut={() =>
+                                animateRoundButtonPressOut('optionsYes')
+                              }
+                              btnImage={require('../../assets/orbizImages/yesIcon.png')}
+                            />
+                          </Animated.View>
                         </View>
                       )}
                     </View>
@@ -834,20 +1091,39 @@ export default function OrbizTreatGame() {
 
               <View style={{ flex: 1, justifyContent: 'flex-end', gap: 15 }}>
                 {!chosenOrb && mode === 'Mystery Orb' && (
+                  <Animated.View
+                    style={{
+                      transform: [{ scale: roundButtonScales.mysteryPlay }],
+                    }}
+                  >
+                    <CustomRoundButton
+                      onPress={handleSpin}
+                      onPressIn={() => animateRoundButtonPressIn('mysteryPlay')}
+                      onPressOut={() =>
+                        animateRoundButtonPressOut('mysteryPlay')
+                      }
+                      width={53}
+                      height={53}
+                      iconStyle={2}
+                      btnImage={require('../../assets/orbizImages/orbizPlay.png')}
+                      isDisabled={spinAnimating || timerRunning}
+                    />
+                  </Animated.View>
+                )}
+                <Animated.View
+                  style={{
+                    transform: [{ scale: roundButtonScales.playingHome }],
+                  }}
+                >
                   <CustomRoundButton
-                    onPress={handleSpin}
+                    onPress={() => navigation.goBack()}
+                    onPressIn={() => animateRoundButtonPressIn('playingHome')}
+                    onPressOut={() => animateRoundButtonPressOut('playingHome')}
                     width={53}
                     height={53}
-                    btnImage={require('../../assets/orbizImages/orbizPlay.png')}
-                    isDisabled={spinAnimating || timerRunning}
+                    btnImage={require('../../assets/orbizImages/homeicon.png')}
                   />
-                )}
-                <CustomRoundButton
-                  onPress={() => navigation.goBack()}
-                  width={53}
-                  height={53}
-                  btnImage={require('../../assets/orbizImages/homeicon.png')}
-                />
+                </Animated.View>
               </View>
             </View>
           )}
@@ -871,24 +1147,6 @@ export default function OrbizTreatGame() {
                   }}
                 />
               )}
-            </View>
-          )}
-
-          {confettiVisible && (
-            <View style={styles.confetti}>
-              <Image
-                source={require('../../assets/orbizImages/confetti.gif')}
-                style={{ width: 380, height: 380 }}
-              />
-            </View>
-          )}
-
-          {revealSelected && chosenOrb && (
-            <View style={styles.revealOverlay} pointerEvents="none">
-              <Image
-                source={gameOrbs[chosenOrb].img}
-                style={styles.revealOrbImg}
-              />
             </View>
           )}
         </View>
@@ -957,7 +1215,19 @@ const styles = StyleSheet.create({
     height: 261,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 60,
+    marginTop: 40,
+  },
+  startActionButton: {
+    width: 152,
+    height: 58,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  startActionButtonTxt: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    fontFamily: 'Sansation-Bold',
   },
   header: {
     width: '92%',
@@ -1055,9 +1325,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   smallOrbWrap: { alignItems: 'center' },
-  smallOrbImg: { width: 64, height: 64, resizeMode: 'contain' },
+  smallOrbImg: { width: 115, height: 115, resizeMode: 'contain' },
   centerOrbWrap: { alignItems: 'center' },
-  centerOrbImg: { width: 110, height: 110, resizeMode: 'contain' },
+  centerOrbImg: { width: 115, height: 115, resizeMode: 'contain' },
+  selectedCenterOrbImg: { width: 115, height: 115, resizeMode: 'contain' },
+  unselectedOrbImg: { width: 84, height: 84, resizeMode: 'contain' },
   spinBtnMain: {
     backgroundColor: '#264653',
     paddingVertical: 12,
@@ -1086,12 +1358,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 10,
-  },
-  confetti: {
-    position: 'absolute',
-    top: '12%',
-    alignSelf: 'center',
-    zIndex: 1000,
   },
   revealOverlay: {
     position: 'absolute',

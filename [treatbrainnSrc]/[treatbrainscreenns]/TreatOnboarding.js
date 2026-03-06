@@ -1,6 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+// onboarding screen
+
 import {
+  Animated,
   Image,
   ImageBackground,
   Platform,
@@ -10,10 +11,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useRef, useState } from 'react';
 
 const TreatOnboarding = () => {
   const [isCurrentViewIndex, setIsCurrentViewIndex] = useState(0);
   const nav = useNavigation();
+  const buttonScale = useRef(new Animated.Value(1)).current;
 
   const BG = require('../../assets/orbizImages/orbizMainBack.png');
 
@@ -59,6 +63,24 @@ const TreatOnboarding = () => {
       : nav.navigate('MainScreen');
   };
 
+  const animateButtonPressIn = () => {
+    Animated.spring(buttonScale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+      friction: 8,
+      tension: 120,
+    }).start();
+  };
+
+  const animateButtonPressOut = () => {
+    Animated.spring(buttonScale, {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 7,
+      tension: 100,
+    }).start();
+  };
+
   return (
     <ImageBackground source={BG} style={{ flex: 1, resizeMode: 'cover' }}>
       <ScrollView
@@ -72,6 +94,9 @@ const TreatOnboarding = () => {
               resizeMode="contain"
               style={[
                 isCurrentViewIndex === 0 && { marginBottom: 30 },
+                isCurrentViewIndex === 1 && { marginBottom: 50 },
+                isCurrentViewIndex === 3 && { marginBottom: 30 },
+                isCurrentViewIndex === 4 && { marginBottom: 20 },
                 Platform.OS === 'android' && {
                   width: 240,
                   height: 240,
@@ -107,21 +132,29 @@ const TreatOnboarding = () => {
               </View>
             </ImageBackground>
 
-            <TouchableOpacity
-              style={{ top: -40, alignSelf: 'center' }}
-              onPress={onNextPress}
-              activeOpacity={0.8}
+            <Animated.View
+              style={{
+                alignSelf: 'center',
+                marginTop: 22,
+                transform: [{ scale: buttonScale }],
+              }}
             >
-              <ImageBackground
-                source={require('../../assets/orbizUi/orbizNextButton.png')}
-                style={st.orbizButton}
+              <TouchableOpacity
+                onPress={onNextPress}
+                onPressIn={animateButtonPressIn}
+                onPressOut={animateButtonPressOut}
+                activeOpacity={0.9}
               >
-                <Image
-                  source={require('../../assets/orbizImages/orbizPlay.png')}
-                  style={{ left: 2, bottom: 1 }}
-                />
-              </ImageBackground>
-            </TouchableOpacity>
+                <ImageBackground
+                  source={require('../../assets/orbizImages/orbztrtonbtn.png')}
+                  style={st.orbizButton}
+                >
+                  <Text style={st.orbizButtonTxt}>
+                    {isCurrentViewIndex === 4 ? 'Start' : 'Next'}
+                  </Text>
+                </ImageBackground>
+              </TouchableOpacity>
+            </Animated.View>
           </View>
         </View>
       </ScrollView>
@@ -134,22 +167,22 @@ const st = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     flex: 1,
-    paddingBottom: 30,
+    paddingBottom: 45,
   },
   orbizTxt: {
-    fontSize: 19,
+    fontSize: 22,
     color: '#FFFFFF',
     textAlign: 'center',
     fontFamily: 'Sansation-Bold',
   },
   orbizSecTxt: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#FFFFFF',
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: 18,
     fontFamily: 'Sansation-Regular',
     fontStyle: 'italic',
-    paddingHorizontal: 2,
+    paddingHorizontal: 15,
   },
   orbizBoard: {
     width: 359,
@@ -159,10 +192,16 @@ const st = StyleSheet.create({
     marginTop: 60,
   },
   orbizButton: {
-    width: 53,
-    height: 53,
+    width: 152,
+    height: 58,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  orbizButtonTxt: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    fontFamily: 'Sansation-Bold',
   },
 });
 

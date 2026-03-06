@@ -1,3 +1,5 @@
+// custom menu button component
+
 import {
   ImageBackground,
   StyleSheet,
@@ -5,15 +7,28 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const CustomMenuButton = ({ onPress, btnText, width = 254, height = 80 }) => {
+const CustomMenuButton = ({
+  onPress,
+  onPressIn,
+  onPressOut,
+  btnText,
+  width = 254,
+  height = 80,
+  textSize = 18,
+}) => {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity
+      onPress={onPress}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
+      activeOpacity={0.8}
+    >
       <ImageBackground
         source={require('../../assets/orbizUi/homeMenuBigBtn.png')}
         style={[st.orbizLargeButton, { width, height }]}
         resizeMode="stretch"
       >
-        <Text style={st.orbizTxt}>{btnText}</Text>
+        <Text style={[st.orbizTxt, { fontSize: textSize }]}>{btnText}</Text>
       </ImageBackground>
     </TouchableOpacity>
   );

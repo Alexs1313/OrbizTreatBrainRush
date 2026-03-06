@@ -1,6 +1,16 @@
+//orbiz main intro screen
+
+import Sound from 'react-native-sound';
+
+import CustomRoundButton from '../[treatbraincmppnts]/CustomRoundButton';
+import CustomMenuButton from '../[treatbraincmppnts]/CustomMenuButton';
+import { BlurView } from '@react-native-community/blur';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useOrbizTreatStore } from '../[treatbrainstoragge]/orbizTreatContext';
+import Toast from 'react-native-toast-message';
 import {
+  Animated,
   Image,
   ImageBackground,
   Linking,
@@ -13,13 +23,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import CustomRoundButton from '../[components]/CustomRoundButton';
-import CustomMenuButton from '../[components]/CustomMenuButton';
-import { BlurView } from '@react-native-community/blur';
-import { useOrbizTreatStore } from '../[storage]/orbizTreatContext';
-import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Sound from 'react-native-sound';
+
 import Orientation from 'react-native-orientation-locker';
 
 const BG = require('../../assets/orbizImages/orbizMainBack.png');
@@ -36,6 +41,15 @@ const MainScreen = () => {
 
   const [orbizMusIdx, setOrbizMusIdx] = useState(0);
   const [sound, setSound] = useState(null);
+  const orbPartyBtnScale = useRef(new Animated.Value(1)).current;
+  const sequenceLabBtnScale = useRef(new Animated.Value(1)).current;
+  const achievementsBtnScale = useRef(new Animated.Value(1)).current;
+  const leadersBtnScale = useRef(new Animated.Value(1)).current;
+  const rulesBtnScale = useRef(new Animated.Value(1)).current;
+  const soundBtnScale = useRef(new Animated.Value(1)).current;
+  const shareBtnScale = useRef(new Animated.Value(1)).current;
+  const notifBtnScale = useRef(new Animated.Value(1)).current;
+  const closeRulesBtnScale = useRef(new Animated.Value(1)).current;
   const orbizTracksCycle = [
     'ambient-piano-and-strings-10711.mp3',
     'ambient-piano-and-strings-10711.mp3',
@@ -206,6 +220,26 @@ const MainScreen = () => {
     );
   };
 
+  const openLeaders = () => nav.navigate('LeaderboardScreen');
+
+  const animatePressIn = scaleValue => {
+    Animated.spring(scaleValue, {
+      toValue: 0.94,
+      useNativeDriver: true,
+      friction: 8,
+      tension: 120,
+    }).start();
+  };
+
+  const animatePressOut = scaleValue => {
+    Animated.spring(scaleValue, {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 7,
+      tension: 100,
+    }).start();
+  };
+
   return (
     <ImageBackground source={BG} style={{ flex: 1, resizeMode: 'cover' }}>
       <ScrollView
@@ -215,54 +249,126 @@ const MainScreen = () => {
       >
         <View style={st.orbizBox}>
           <View>
+            <Image
+              source={require('../../assets/orbizImages/orbztrtohomel.png')}
+              style={{ marginBottom: 20, alignSelf: 'center' }}
+            />
+
             <ImageBackground
               source={require('../../assets/orbizUi/homeMenuBoard.png')}
               style={st.orbizBoard}
               resizeMode="stretch"
             >
-              <View style={{ gap: 20 }}>
-                <CustomMenuButton
-                  onPress={() => nav.navigate('OrbizTreatGame')}
-                  btnText="Play"
-                />
+              <View style={st.mainButtonsWrap}>
+                <Animated.View
+                  style={{ transform: [{ scale: orbPartyBtnScale }] }}
+                >
+                  <CustomMenuButton
+                    onPress={() => nav.navigate('OrbizTreatGame')}
+                    onPressIn={() => animatePressIn(orbPartyBtnScale)}
+                    onPressOut={() => animatePressOut(orbPartyBtnScale)}
+                    btnText="Orb Party Mode"
+                    width={169}
+                    height={53}
+                  />
+                </Animated.View>
 
-                <CustomMenuButton
-                  onPress={() => setShowRules(true)}
-                  btnText="Rules"
-                />
+                <Animated.View
+                  style={{ transform: [{ scale: sequenceLabBtnScale }] }}
+                >
+                  <CustomMenuButton
+                    onPress={() => nav.navigate('SequenceLabScreen')}
+                    onPressIn={() => animatePressIn(sequenceLabBtnScale)}
+                    onPressOut={() => animatePressOut(sequenceLabBtnScale)}
+                    btnText="Sequence Lab"
+                    width={169}
+                    height={53}
+                  />
+                </Animated.View>
 
-                <CustomMenuButton
-                  onPress={() => nav.navigate('OrbizTreatAchievements')}
-                  btnText="Achievements"
-                />
+                <Animated.View
+                  style={{ transform: [{ scale: achievementsBtnScale }] }}
+                >
+                  <CustomMenuButton
+                    onPress={() => nav.navigate('OrbizTreatAchievements')}
+                    onPressIn={() => animatePressIn(achievementsBtnScale)}
+                    onPressOut={() => animatePressOut(achievementsBtnScale)}
+                    btnText="Achievements"
+                    width={128}
+                    height={40}
+                    textSize={15}
+                  />
+                </Animated.View>
+
+                <Animated.View
+                  style={{ transform: [{ scale: leadersBtnScale }] }}
+                >
+                  <CustomMenuButton
+                    onPress={openLeaders}
+                    onPressIn={() => animatePressIn(leadersBtnScale)}
+                    onPressOut={() => animatePressOut(leadersBtnScale)}
+                    btnText="Leaders"
+                    width={128}
+                    height={40}
+                    textSize={15}
+                  />
+                </Animated.View>
+
+                <Animated.View
+                  style={{ transform: [{ scale: rulesBtnScale }] }}
+                >
+                  <CustomMenuButton
+                    onPress={() => setShowRules(true)}
+                    onPressIn={() => animatePressIn(rulesBtnScale)}
+                    onPressOut={() => animatePressOut(rulesBtnScale)}
+                    btnText="Orb Party Rules"
+                    width={128}
+                    height={40}
+                    textSize={15}
+                  />
+                </Animated.View>
               </View>
             </ImageBackground>
 
             <View style={st.bottomButtonsWrap}>
               {Platform.OS !== 'android' && (
-                <CustomRoundButton
-                  onPress={() => toggleSound(!isEnabledMusic)}
-                  btnImage={
-                    isEnabledMusic
-                      ? require('../../assets/orbizImages/orbizMusicOff.png')
-                      : require('../../assets/orbizImages/inactiveSound.png')
-                  }
-                />
+                <Animated.View
+                  style={{ transform: [{ scale: soundBtnScale }] }}
+                >
+                  <CustomRoundButton
+                    onPress={() => toggleSound(!isEnabledMusic)}
+                    onPressIn={() => animatePressIn(soundBtnScale)}
+                    onPressOut={() => animatePressOut(soundBtnScale)}
+                    btnImage={
+                      isEnabledMusic
+                        ? require('../../assets/orbizImages/orbizMusicOff.png')
+                        : require('../../assets/orbizImages/inactiveSound.png')
+                    }
+                  />
+                </Animated.View>
               )}
 
-              <CustomRoundButton
-                onPress={Platform.OS === 'ios' ? shareApp : handleShare}
-                btnImage={require('../../assets/orbizImages/orbizShare.png')}
-              />
+              <Animated.View style={{ transform: [{ scale: shareBtnScale }] }}>
+                <CustomRoundButton
+                  onPress={Platform.OS === 'ios' ? shareApp : handleShare}
+                  onPressIn={() => animatePressIn(shareBtnScale)}
+                  onPressOut={() => animatePressOut(shareBtnScale)}
+                  btnImage={require('../../assets/orbizImages/orbizShare.png')}
+                />
+              </Animated.View>
 
-              <CustomRoundButton
-                onPress={() => toggleNotifications(!isEnabledNotifications)}
-                btnImage={
-                  isEnabledNotifications
-                    ? require('../../assets/orbizImages/orbizNotif.png')
-                    : require('../../assets/orbizImages/inactivNotf.png')
-                }
-              />
+              <Animated.View style={{ transform: [{ scale: notifBtnScale }] }}>
+                <CustomRoundButton
+                  onPress={() => toggleNotifications(!isEnabledNotifications)}
+                  onPressIn={() => animatePressIn(notifBtnScale)}
+                  onPressOut={() => animatePressOut(notifBtnScale)}
+                  btnImage={
+                    isEnabledNotifications
+                      ? require('../../assets/orbizImages/orbizNotif.png')
+                      : require('../../assets/orbizImages/inactivNotf.png')
+                  }
+                />
+              </Animated.View>
             </View>
           </View>
         </View>
@@ -292,13 +398,13 @@ const MainScreen = () => {
         >
           <View style={st.modalBackdrop}>
             <BlurView
-              blurType="dark"
+              blurType="light"
               blurAmount={1}
               style={{ position: 'absolute', width: '100%', height: '100%' }}
             />
             {Platform.OS === 'android' ? null : (
               <Image
-                source={require('../../assets/orbizImages/oboardimg1.png')}
+                source={require('../../assets/orbizImages/orbztrtoruls.png')}
                 style={{ top: 10, zIndex: 1 }}
               />
             )}
@@ -308,16 +414,24 @@ const MainScreen = () => {
               style={st.orbizRulesBoard}
               resizeMode="stretch"
             >
-              <TouchableOpacity
-                style={{ position: 'absolute', top: 40, right: 40 }}
-                onPress={() => setShowRules(false)}
+              <Animated.View
+                style={[
+                  { position: 'absolute', top: 40, right: 40 },
+                  { transform: [{ scale: closeRulesBtnScale }] },
+                ]}
               >
-                <Image
-                  source={require('../../assets/orbizImages/closeIcon.png')}
-                />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setShowRules(false)}
+                  onPressIn={() => animatePressIn(closeRulesBtnScale)}
+                  onPressOut={() => animatePressOut(closeRulesBtnScale)}
+                >
+                  <Image
+                    source={require('../../assets/orbizImages/closeIcon.png')}
+                  />
+                </TouchableOpacity>
+              </Animated.View>
               <View>
-                <Text style={st.orbizRulesTxt}>Game Rules</Text>
+                <Text style={st.orbizRulesTxt}>Orb Party Rules</Text>
                 <Text style={st.orbizRulesSub}>
                   This is a fast party word-challenge game. You get a task and
                   must name 3, 4, or 5 things depending on the difficulty. Easy
@@ -340,17 +454,55 @@ const st = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    paddingBottom: 30,
-    paddingTop: 20,
+    paddingBottom: 16,
+    paddingTop: Platform.OS === 'ios' ? 42 : 26,
+  },
+  logoWrap: {
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  logoTextTop: {
+    fontSize: 56,
+    lineHeight: 58,
+    color: '#FFB100',
+    textAlign: 'center',
+    fontFamily: 'Sansation-Bold',
+    textShadowColor: '#5D0BAA',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 0,
+  },
+  logoTextMid: {
+    fontSize: 54,
+    lineHeight: 56,
+    color: '#7A2BFF',
+    textAlign: 'center',
+    fontFamily: 'Sansation-Bold',
+    textShadowColor: '#4F0A9D',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 0,
+  },
+  logoTextBottom: {
+    fontSize: 50,
+    lineHeight: 52,
+    color: '#FF9C00',
+    textAlign: 'center',
+    fontFamily: 'Sansation-Bold',
+    textShadowColor: '#57118F',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 0,
   },
   orbizBoard: {
-    width: 345,
+    width: 335,
     height: 430,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  mainButtonsWrap: {
+    gap: 16,
+    alignItems: 'center',
+  },
   bottomButtonsWrap: {
-    top: -40,
+    top: -34,
     gap: 20,
     alignItems: 'center',
     flexDirection: 'row',
@@ -375,13 +527,12 @@ const st = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Sansation-Regular',
     fontStyle: 'italic',
-    paddingHorizontal: 22,
-    lineHeight: 24,
+    paddingHorizontal: 42,
+    lineHeight: 25,
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor:
-      Platform.OS === 'android' ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
