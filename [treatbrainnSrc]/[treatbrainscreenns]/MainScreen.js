@@ -216,7 +216,7 @@ const MainScreen = () => {
 
   const shareApp = () => {
     Linking.openURL(
-      'https://apps.apple.com/us/app/orbiz-treat-brainrush/id6757544059',
+      'https://apps.apple.com/us/app/orbiz-treat-brainrush/id6760121334',
     );
   };
 
