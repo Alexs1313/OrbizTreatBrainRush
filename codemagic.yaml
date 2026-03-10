@@ -4,16 +4,16 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
-      app_store_connect: SweetBrainRushAPIKey
+      app_store_connect: NewSweetBrainAPIKey
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.SweetBrainRushOrbiz
+        bundle_identifier: com.hjhhjsha.swjckjakjn
       vars:
-        BUNDLE_ID: com.SweetBrainRushOrbiz
+        BUNDLE_ID: com.hjhhjsha.swjckjakjn
         XCODE_WORKSPACE: OrbizTreatBrainRush.xcworkspace
         XCODE_SCHEME: OrbizTreatBrainRush
-        APP_STORE_APPLE_ID: 6760341621
+        APP_STORE_APPLE_ID: 6760361005
     scripts:
       - name: Install npm dependencies
         script: |

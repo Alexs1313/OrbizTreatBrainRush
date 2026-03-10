@@ -18,7 +18,7 @@ const Treatbrainstackknavy = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="CustomLoader" component={CustomLoader} />
-      <Stack.Screen name="TreatOnboarding" component={TreatOnboarding} />
+      <Stack.Screen name="TreatOnboarding" component={TreatOnboardin} />
       <Stack.Screen name="MainScreen" component={MainScreen} />
       <Stack.Screen name="OrbizTreatGame" component={OrbizTreatGame} />
       <Stack.Screen name="SequenceLabScreen" component={SequenceLabScreen} />

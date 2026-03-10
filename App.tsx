@@ -1,5 +1,3 @@
-// App entry ->
-
 import Toast from 'react-native-toast-message';
 import { NavigationContainer } from '@react-navigation/native';
 
