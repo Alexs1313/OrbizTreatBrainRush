@@ -20,17 +20,17 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 
 import CustomRoundButton from '../[treatbraincmppnts]/CustomRoundButton';
 
-const BG = require('../../assets/orbizImages/orbizMainBack.png');
-const ENTRIES_PER_PAGE = 7;
+const sweetOrbsBG = require('../../assets/orbizImages/orbizMainBack.png');
+const sweetOrbsENTRIES_PER_PAGE = 7;
 
-const makeFormttdDate = ts =>
+const sweetOrbsMakeFormttdDate = ts =>
   new Date(ts).toLocaleDateString('uk-UA', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
   });
 
-const makeFormattedTime = ts =>
+const sweetOrbsMakeFormattedTime = ts =>
   new Date(ts).toLocaleTimeString('uk-UA', {
     hour: '2-digit',
     minute: '2-digit',
@@ -39,17 +39,17 @@ const makeFormattedTime = ts =>
 
 const LeaderboardScreen = () => {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState('orbParty');
-  const [page, setPage] = useState(0);
-  const [orbPartyRows, setOrbPartyRows] = useState([]);
-  const [sequenceRows, setSequenceRows] = useState([]);
-  const orbTabScale = useRef(new Animated.Value(1)).current;
-  const sequenceTabScale = useRef(new Animated.Value(1)).current;
-  const prevArrowScale = useRef(new Animated.Value(1)).current;
-  const nextArrowScale = useRef(new Animated.Value(1)).current;
-  const homeScale = useRef(new Animated.Value(1)).current;
+  const [sweetOrbsActiveTab, setActiveTab] = useState('orbParty');
+  const [sweetOrbsPage, setPage] = useState(0);
+  const [sweetOrbsOrbPartyRows, setOrbPartyRows] = useState([]);
+  const [sweetOrbsSequenceRows, setSequenceRows] = useState([]);
+  const sweetOrbsOrbTabScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsSequenceTabScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsPrevArrowScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsNextArrowScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsHomeScale = useRef(new Animated.Value(1)).current;
 
-  const getSavedOrbsDtta = useCallback(async () => {
+  const sweetOrbsGetSavedOrbsDtta = useCallback(async () => {
     const [orbData, sequenceData] = await Promise.all([
       getOrbPartyResults(),
       getSequenceLabResults(),
@@ -79,30 +79,44 @@ const LeaderboardScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      getSavedOrbsDtta();
-    }, [getSavedOrbsDtta]),
+      sweetOrbsGetSavedOrbsDtta();
+    }, [sweetOrbsGetSavedOrbsDtta]),
   );
 
-  const visibleRows = useMemo(() => {
-    const rows = activeTab === 'orbParty' ? orbPartyRows : sequenceRows;
-    const start = page * ENTRIES_PER_PAGE;
-    return rows.slice(start, start + ENTRIES_PER_PAGE);
-  }, [activeTab, orbPartyRows, page, sequenceRows]);
+  const sweetOrbsVisibleRows = useMemo(() => {
+    const rows =
+      sweetOrbsActiveTab === 'orbParty'
+        ? sweetOrbsOrbPartyRows
+        : sweetOrbsSequenceRows;
+    const start = sweetOrbsPage * sweetOrbsENTRIES_PER_PAGE;
+    return rows.slice(start, start + sweetOrbsENTRIES_PER_PAGE);
+  }, [
+    sweetOrbsActiveTab,
+    sweetOrbsOrbPartyRows,
+    sweetOrbsPage,
+    sweetOrbsSequenceRows,
+  ]);
 
-  const totalRows =
-    activeTab === 'orbParty' ? orbPartyRows.length : sequenceRows.length;
-  const totalPages = Math.max(1, Math.ceil(totalRows / ENTRIES_PER_PAGE));
-  const showPager = totalRows > ENTRIES_PER_PAGE;
+  const sweetOrbsTotalRows =
+    sweetOrbsActiveTab === 'orbParty'
+      ? sweetOrbsOrbPartyRows.length
+      : sweetOrbsSequenceRows.length;
+  const sweetOrbsTotalPages = Math.max(
+    1,
+    Math.ceil(sweetOrbsTotalRows / sweetOrbsENTRIES_PER_PAGE),
+  );
+  const sweetOrbsShowPager = sweetOrbsTotalRows > sweetOrbsENTRIES_PER_PAGE;
 
-  const selectTab = tab => {
+  const sweetOrbsSelectTab = tab => {
     setActiveTab(tab);
     setPage(0);
   };
 
-  const onPrevPage = () => setPage(prev => Math.max(prev - 1, 0));
-  const onNextPage = () => setPage(prev => Math.min(prev + 1, totalPages - 1));
+  const sweetOrbsOnPrevPage = () => setPage(prev => Math.max(prev - 1, 0));
+  const sweetOrbsOnNextPage = () =>
+    setPage(prev => Math.min(prev + 1, sweetOrbsTotalPages - 1));
 
-  const animatePressIn = scaleValue => {
+  const sweetOrbsAnimatePressIn = scaleValue => {
     Animated.spring(scaleValue, {
       toValue: 0.93,
       useNativeDriver: true,
@@ -111,7 +125,7 @@ const LeaderboardScreen = () => {
     }).start();
   };
 
-  const animatePressOut = scaleValue => {
+  const sweetOrbsAnimatePressOut = scaleValue => {
     Animated.spring(scaleValue, {
       toValue: 1,
       useNativeDriver: true,
@@ -121,65 +135,83 @@ const LeaderboardScreen = () => {
   };
 
   return (
-    <ImageBackground source={BG} style={styles.bg}>
+    <ImageBackground source={sweetOrbsBG} style={styles.sweetOrbsBg}>
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.sweetOrbsScrollContent}
         bounces={false}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.root}>
+        <View style={styles.sweetOrbsRoot}>
           <Image
             source={require('../../assets/orbizImages/orbztrtleadr.png')}
             style={{ zIndex: 100 }}
           />
 
-          <View style={styles.tabsWrap}>
-            <Animated.View style={{ transform: [{ scale: orbTabScale }] }}>
+          <View style={styles.sweetOrbsTabsWrap}>
+            <Animated.View
+              style={{ transform: [{ scale: sweetOrbsOrbTabScale }] }}
+            >
               <TouchableOpacity
-                onPress={() => selectTab('orbParty')}
-                onPressIn={() => animatePressIn(orbTabScale)}
-                onPressOut={() => animatePressOut(orbTabScale)}
+                onPress={() => sweetOrbsSelectTab('orbParty')}
+                onPressIn={() => sweetOrbsAnimatePressIn(sweetOrbsOrbTabScale)}
+                onPressOut={() =>
+                  sweetOrbsAnimatePressOut(sweetOrbsOrbTabScale)
+                }
                 activeOpacity={0.9}
-                style={styles.tabTouchable}
+                style={styles.sweetOrbsTabTouchable}
               >
                 <ImageBackground
                   source={require('../../assets/orbizUi/orbizQuestBoard.png')}
                   resizeMode="stretch"
                   style={[
-                    styles.tabButton,
-                    activeTab !== 'orbParty' && styles.tabInactive,
+                    styles.sweetOrbsTabButton,
+                    sweetOrbsActiveTab !== 'orbParty' &&
+                      styles.sweetOrbsTabInactive,
                   ]}
                 >
                   <Image
                     source={require('../../assets/orbizImages/orbztrtlsqqns.png')}
                     style={[
-                      activeTab !== 'orbParty' && { width: 87, height: 40 },
+                      sweetOrbsActiveTab !== 'orbParty' && {
+                        width: 87,
+                        height: 40,
+                      },
                     ]}
                   />
                 </ImageBackground>
               </TouchableOpacity>
             </Animated.View>
 
-            <Animated.View style={{ transform: [{ scale: sequenceTabScale }] }}>
+            <Animated.View
+              style={{ transform: [{ scale: sweetOrbsSequenceTabScale }] }}
+            >
               <TouchableOpacity
-                onPress={() => selectTab('sequence')}
-                onPressIn={() => animatePressIn(sequenceTabScale)}
-                onPressOut={() => animatePressOut(sequenceTabScale)}
+                onPress={() => sweetOrbsSelectTab('sequence')}
+                onPressIn={() =>
+                  sweetOrbsAnimatePressIn(sweetOrbsSequenceTabScale)
+                }
+                onPressOut={() =>
+                  sweetOrbsAnimatePressOut(sweetOrbsSequenceTabScale)
+                }
                 activeOpacity={0.9}
-                style={styles.tabTouchable}
+                style={styles.sweetOrbsTabTouchable}
               >
                 <ImageBackground
                   source={require('../../assets/orbizUi/orbizQuestBoard.png')}
                   resizeMode="stretch"
                   style={[
-                    styles.tabButton,
-                    activeTab !== 'sequence' && styles.tabInactive,
+                    styles.sweetOrbsTabButton,
+                    sweetOrbsActiveTab !== 'sequence' &&
+                      styles.sweetOrbsTabInactive,
                   ]}
                 >
                   <Image
                     source={require('../../assets/orbizImages/orbztrtpartymdd.png')}
                     style={[
-                      activeTab !== 'sequence' && { width: 56, height: 51 },
+                      sweetOrbsActiveTab !== 'sequence' && {
+                        width: 56,
+                        height: 51,
+                      },
                     ]}
                   />
                 </ImageBackground>
@@ -189,82 +221,102 @@ const LeaderboardScreen = () => {
 
           <ImageBackground
             source={require('../../assets/orbizUi/orbizSetupBoard.png')}
-            style={styles.tableBoard}
+            style={styles.sweetOrbsTableBoard}
             resizeMode="stretch"
           >
-            {activeTab === 'orbParty' ? (
-              <View style={styles.listWrap}>
-                {visibleRows.length > 0 ? (
-                  visibleRows.map((row, index) => (
-                    <View key={`${row.name}-${index}`} style={styles.rowLine}>
-                      <Text style={styles.rowName}>{row.name}</Text>
-                      <Text style={styles.rowScore}>{row.score}</Text>
+            {sweetOrbsActiveTab === 'orbParty' ? (
+              <View style={styles.sweetOrbsListWrap}>
+                {sweetOrbsVisibleRows.length > 0 ? (
+                  sweetOrbsVisibleRows.map((row, index) => (
+                    <View
+                      key={`${row.name}-${index}`}
+                      style={styles.sweetOrbsRowLine}
+                    >
+                      <Text style={styles.sweetOrbsRowName}>{row.name}</Text>
+                      <Text style={styles.sweetOrbsRowScore}>{row.score}</Text>
                     </View>
                   ))
                 ) : (
-                  <Text style={styles.emptyText}>
+                  <Text style={styles.sweetOrbsEmptyText}>
                     No Orb Party results yet.
                   </Text>
                 )}
               </View>
             ) : (
-              <View style={styles.listWrap}>
-                <View style={styles.sequenceHeader}>
-                  <Text style={styles.headerCell}>Time</Text>
-                  <Text style={styles.headerCell}>Date</Text>
-                  <Text style={styles.headerCell}>Score</Text>
+              <View style={styles.sweetOrbsListWrap}>
+                <View style={styles.sweetOrbsSequenceHeader}>
+                  <Text style={styles.sweetOrbsHeaderCell}>Time</Text>
+                  <Text style={styles.sweetOrbsHeaderCell}>Date</Text>
+                  <Text style={styles.sweetOrbsHeaderCell}>Score</Text>
                 </View>
-                {visibleRows.length > 0 ? (
-                  visibleRows.map((row, index) => (
-                    <View key={`${row.id}-${index}`} style={styles.sequenceRow}>
-                      <Text style={styles.sequenceCell}>
-                        {makeFormattedTime(row.createdAt)}
+                {sweetOrbsVisibleRows.length > 0 ? (
+                  sweetOrbsVisibleRows.map((row, index) => (
+                    <View
+                      key={`${row.id}-${index}`}
+                      style={styles.sweetOrbsSequenceRow}
+                    >
+                      <Text style={styles.sweetOrbsSequenceCell}>
+                        {sweetOrbsMakeFormattedTime(row.createdAt)}
                       </Text>
-                      <Text style={styles.sequenceCell}>
-                        {makeFormttdDate(row.createdAt)}
+                      <Text style={styles.sweetOrbsSequenceCell}>
+                        {sweetOrbsMakeFormttdDate(row.createdAt)}
                       </Text>
-                      <Text style={styles.sequenceCell}>{row.score}</Text>
+                      <Text style={styles.sweetOrbsSequenceCell}>
+                        {row.score}
+                      </Text>
                     </View>
                   ))
                 ) : (
-                  <Text style={styles.emptyText}>
+                  <Text style={styles.sweetOrbsEmptyText}>
                     No Sequence Lab results yet.
                   </Text>
                 )}
               </View>
             )}
 
-            {showPager && (
-              <View style={styles.pagerWrap}>
+            {sweetOrbsShowPager && (
+              <View style={styles.sweetOrbsPagerWrap}>
                 <Animated.View
-                  style={{ transform: [{ scale: prevArrowScale }] }}
+                  style={{ transform: [{ scale: sweetOrbsPrevArrowScale }] }}
                 >
                   <TouchableOpacity
-                    onPress={onPrevPage}
-                    onPressIn={() => animatePressIn(prevArrowScale)}
-                    onPressOut={() => animatePressOut(prevArrowScale)}
-                    disabled={page === 0}
+                    onPress={sweetOrbsOnPrevPage}
+                    onPressIn={() =>
+                      sweetOrbsAnimatePressIn(sweetOrbsPrevArrowScale)
+                    }
+                    onPressOut={() =>
+                      sweetOrbsAnimatePressOut(sweetOrbsPrevArrowScale)
+                    }
+                    disabled={sweetOrbsPage === 0}
                   >
                     <Image
                       source={require('../../assets/orbizUi/prevarr.png')}
-                      style={[styles.arrow, page === 0 && styles.arrowDisabled]}
+                      style={[
+                        styles.sweetOrbsArrow,
+                        sweetOrbsPage === 0 && styles.sweetOrbsArrowDisabled,
+                      ]}
                     />
                   </TouchableOpacity>
                 </Animated.View>
                 <Animated.View
-                  style={{ transform: [{ scale: nextArrowScale }] }}
+                  style={{ transform: [{ scale: sweetOrbsNextArrowScale }] }}
                 >
                   <TouchableOpacity
-                    onPress={onNextPage}
-                    onPressIn={() => animatePressIn(nextArrowScale)}
-                    onPressOut={() => animatePressOut(nextArrowScale)}
-                    disabled={page >= totalPages - 1}
+                    onPress={sweetOrbsOnNextPage}
+                    onPressIn={() =>
+                      sweetOrbsAnimatePressIn(sweetOrbsNextArrowScale)
+                    }
+                    onPressOut={() =>
+                      sweetOrbsAnimatePressOut(sweetOrbsNextArrowScale)
+                    }
+                    disabled={sweetOrbsPage >= sweetOrbsTotalPages - 1}
                   >
                     <Image
                       source={require('../../assets/orbizUi/nextarr.png')}
                       style={[
-                        styles.arrow,
-                        page >= totalPages - 1 && styles.arrowDisabled,
+                        styles.sweetOrbsArrow,
+                        sweetOrbsPage >= sweetOrbsTotalPages - 1 &&
+                          styles.sweetOrbsArrowDisabled,
                       ]}
                     />
                   </TouchableOpacity>
@@ -273,12 +325,14 @@ const LeaderboardScreen = () => {
             )}
           </ImageBackground>
 
-          <View style={styles.homeWrap}>
-            <Animated.View style={{ transform: [{ scale: homeScale }] }}>
+          <View style={styles.sweetOrbsHomeWrap}>
+            <Animated.View
+              style={{ transform: [{ scale: sweetOrbsHomeScale }] }}
+            >
               <CustomRoundButton
                 onPress={() => navigation.goBack()}
-                onPressIn={() => animatePressIn(homeScale)}
-                onPressOut={() => animatePressOut(homeScale)}
+                onPressIn={() => sweetOrbsAnimatePressIn(sweetOrbsHomeScale)}
+                onPressOut={() => sweetOrbsAnimatePressOut(sweetOrbsHomeScale)}
                 btnImage={require('../../assets/orbizImages/homeicon.png')}
               />
             </Animated.View>
@@ -306,15 +360,15 @@ const LeaderboardScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  scrollContent: { flexGrow: 1 },
-  root: {
+  sweetOrbsBg: { flex: 1 },
+  sweetOrbsScrollContent: { flexGrow: 1 },
+  sweetOrbsRoot: {
     flex: 1,
     alignItems: 'center',
     paddingTop: 60,
     paddingBottom: 22,
   },
-  logoText: {
+  sweetOrbsLogoText: {
     fontSize: 44,
     color: '#FFB100',
     fontFamily: 'Sansation-Bold',
@@ -322,7 +376,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 4 },
     textShadowRadius: 0,
   },
-  tabsWrap: {
+  sweetOrbsTabsWrap: {
     marginTop: 34,
     width: '100%',
     flexDirection: 'row',
@@ -330,25 +384,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 14,
   },
-  tabTouchable: {
+  sweetOrbsTabTouchable: {
     width: 177,
     alignItems: 'center',
   },
-  tabButton: {
+  sweetOrbsTabButton: {
     width: 177,
     height: 85,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tabInactive: { opacity: 0.45 },
-  tabButtonText: {
+  sweetOrbsTabInactive: { opacity: 0.45 },
+  sweetOrbsTabButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
     textAlign: 'center',
     fontFamily: 'Sansation-Bold',
     lineHeight: 16,
   },
-  tableBoard: {
+  sweetOrbsTableBoard: {
     width: 335,
     height: 409,
     marginTop: 26,
@@ -356,73 +410,73 @@ const styles = StyleSheet.create({
     paddingBottom: 18,
     alignItems: 'center',
   },
-  listWrap: {
+  sweetOrbsListWrap: {
     width: '85%',
     minHeight: 280,
     alignItems: 'center',
   },
-  rowLine: {
+  sweetOrbsRowLine: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 14,
   },
-  rowName: {
+  sweetOrbsRowName: {
     color: '#FFFFFF',
     fontSize: 34,
     fontFamily: 'Sansation-Bold',
   },
-  rowScore: {
+  sweetOrbsRowScore: {
     color: '#FFFFFF',
     fontSize: 34,
     fontFamily: 'Sansation-Bold',
   },
-  sequenceHeader: {
+  sweetOrbsSequenceHeader: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 20,
     paddingTop: 10,
   },
-  headerCell: {
+  sweetOrbsHeaderCell: {
     width: '33%',
     textAlign: 'center',
     color: '#FFFFFF',
     fontSize: 16,
     fontFamily: 'Sansation-Bold',
   },
-  sequenceRow: {
+  sweetOrbsSequenceRow: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 10,
   },
-  sequenceCell: {
+  sweetOrbsSequenceCell: {
     width: '33%',
     color: '#FFFFFF',
     fontSize: 16,
     fontFamily: 'Sansation-Bold',
     textAlign: 'center',
   },
-  emptyText: {
+  sweetOrbsEmptyText: {
     color: '#FFFFFF',
     textAlign: 'center',
     marginTop: 24,
     fontSize: 18,
     fontFamily: 'Sansation-Regular',
   },
-  pagerWrap: {
+  sweetOrbsPagerWrap: {
     marginTop: 8,
     flexDirection: 'row',
     gap: 26,
     alignItems: 'center',
   },
-  arrow: {
+  sweetOrbsArrow: {
     width: 26,
     height: 26,
   },
-  arrowDisabled: { opacity: 0.3 },
-  homeWrap: {
+  sweetOrbsArrowDisabled: { opacity: 0.3 },
+  sweetOrbsHomeWrap: {
     marginTop: 16,
   },
 });

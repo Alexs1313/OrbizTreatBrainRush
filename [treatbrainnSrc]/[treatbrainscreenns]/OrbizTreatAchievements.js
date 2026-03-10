@@ -23,9 +23,9 @@ import {
 
 import { getSequenceLabResults } from '../[treatbrainstoragge]/leaderboardStorage';
 
-const BG = require('../../assets/orbizImages/orbizMainBack.png');
+const sweetOrbsBG = require('../../assets/orbizImages/orbizMainBack.png');
 
-const orbizAchievements = [
+const sweetOrbsAchievements = [
   {
     id: 1,
     achttl: 'Star Winner',
@@ -71,11 +71,11 @@ export default function AchievementsScreen({ navigation }) {
     partyRoundsPlayed,
     hardSuccessCount,
   } = useOrbizTreatStore();
-  const [sequenceLabBestScore, setSequenceLabBestScore] = useState(0);
-  const progressAnimations = useRef(
-    orbizAchievements.map(() => new Animated.Value(0)),
+  const [sweetOrbsSequenceLabBestScore, setSequenceLabBestScore] = useState(0);
+  const sweetOrbsProgressAnimations = useRef(
+    sweetOrbsAchievements.map(() => new Animated.Value(0)),
   ).current;
-  const homeButtonScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsHomeButtonScale = useRef(new Animated.Value(1)).current;
 
   useFocusEffect(
     useCallback(() => {
@@ -92,18 +92,18 @@ export default function AchievementsScreen({ navigation }) {
     }, []),
   );
 
-  const progressByAchievement = useMemo(
+  const sweetOrbsProgressByAchievement = useMemo(
     () => ({
       1: { current: gamesCompleted, target: 1 },
       2: { current: consecutiveScoringRounds, target: 5 },
-      3: { current: sequenceLabBestScore, target: 10 },
+      3: { current: sweetOrbsSequenceLabBestScore, target: 10 },
       4: { current: partyRoundsPlayed, target: 10 },
       5: { current: hardSuccessCount, target: 1 },
       6: { current: gamesCompleted, target: 10 },
     }),
     [
       gamesCompleted,
-      sequenceLabBestScore,
+      sweetOrbsSequenceLabBestScore,
       consecutiveScoringRounds,
       partyRoundsPlayed,
       hardSuccessCount,
@@ -111,8 +111,8 @@ export default function AchievementsScreen({ navigation }) {
   );
 
   useEffect(() => {
-    const anims = orbizAchievements.map((achieve, index) => {
-      const progressData = progressByAchievement[achieve.id] || {
+    const anims = sweetOrbsAchievements.map((achieve, index) => {
+      const progressData = sweetOrbsProgressByAchievement[achieve.id] || {
         current: 0,
         target: 1,
       };
@@ -120,7 +120,7 @@ export default function AchievementsScreen({ navigation }) {
         progressData.current / progressData.target,
         1,
       );
-      return Animated.timing(progressAnimations[index], {
+      return Animated.timing(sweetOrbsProgressAnimations[index], {
         toValue: normalizedProgress,
         duration: 650,
         delay: index * 70,
@@ -129,10 +129,10 @@ export default function AchievementsScreen({ navigation }) {
     });
 
     Animated.parallel(anims).start();
-  }, [progressAnimations, progressByAchievement]);
+  }, [sweetOrbsProgressAnimations, sweetOrbsProgressByAchievement]);
 
   const animateHomePressIn = () => {
-    Animated.spring(homeButtonScale, {
+    Animated.spring(sweetOrbsHomeButtonScale, {
       toValue: 0.94,
       useNativeDriver: true,
       friction: 8,
@@ -141,7 +141,7 @@ export default function AchievementsScreen({ navigation }) {
   };
 
   const animateHomePressOut = () => {
-    Animated.spring(homeButtonScale, {
+    Animated.spring(sweetOrbsHomeButtonScale, {
       toValue: 1,
       useNativeDriver: true,
       friction: 7,
@@ -150,22 +150,26 @@ export default function AchievementsScreen({ navigation }) {
   };
 
   return (
-    <ImageBackground source={BG} style={styl.bg}>
+    <ImageBackground source={sweetOrbsBG} style={styl.sweetOrbsBg}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         bounces={false}
       >
-        <View style={styl.container}>
-          <Text style={styl.title}>Achievements</Text>
+        <View style={styl.sweetOrbsContainer}>
+          <Text style={styl.sweetOrbsTitle}>Achievements</Text>
 
-          <View style={styl.grid}>
-            {orbizAchievements.map((achieve, index) => {
-              const progressData = progressByAchievement[achieve.id] || {
+          <View style={styl.sweetOrbsGrid}>
+            {sweetOrbsAchievements.map((achieve, index) => {
+              const progressData = sweetOrbsProgressByAchievement[
+                achieve.id
+              ] || {
                 current: 0,
                 target: 1,
               };
-              const progressWidth = progressAnimations[index].interpolate({
+              const progressWidth = sweetOrbsProgressAnimations[
+                index
+              ].interpolate({
                 inputRange: [0, 1],
                 outputRange: [0, 126],
               });
@@ -173,31 +177,39 @@ export default function AchievementsScreen({ navigation }) {
                 <ImageBackground
                   key={achieve.id}
                   source={require('../../assets/orbizUi/achieveBoard.png')}
-                  style={styl.achieveBoard}
+                  style={styl.sweetOrbsAchieveBoard}
                   resizeMode="stretch"
                 >
-                  <View key={achieve.id} style={styl.cardInner}>
-                    <Image source={achieve.achicon} style={styl.icon} />
+                  <View key={achieve.id} style={styl.sweetOrbsCardInner}>
+                    <Image
+                      source={achieve.achicon}
+                      style={styl.sweetOrbsIcon}
+                    />
 
-                    <Text style={styl.achTitle}>{achieve.achttl}</Text>
-                    <View style={styl.progressBarTrack}>
+                    <Text style={styl.sweetOrbsAchTitle}>{achieve.achttl}</Text>
+                    <View style={styl.sweetOrbsProgressBarTrack}>
                       <Animated.View
-                        style={[styl.progressBarFill, { width: progressWidth }]}
+                        style={[
+                          styl.sweetOrbsProgressBarFill,
+                          { width: progressWidth },
+                        ]}
                       />
-                      <Text style={styl.progressText}>
+                      <Text style={styl.sweetOrbsProgressText}>
                         {Math.min(progressData.current, progressData.target)}/
                         {progressData.target}
                       </Text>
                     </View>
-                    <Text style={styl.achSub}>{achieve.achsbttl}</Text>
+                    <Text style={styl.sweetOrbsAchSub}>{achieve.achsbttl}</Text>
                   </View>
                 </ImageBackground>
               );
             })}
           </View>
 
-          <View style={styl.bottomRow}>
-            <Animated.View style={{ transform: [{ scale: homeButtonScale }] }}>
+          <View style={styl.sweetOrbsBottomRow}>
+            <Animated.View
+              style={{ transform: [{ scale: sweetOrbsHomeButtonScale }] }}
+            >
               <CustomRoundButton
                 onPress={() => navigation.goBack()}
                 onPressIn={animateHomePressIn}
@@ -231,20 +243,20 @@ export default function AchievementsScreen({ navigation }) {
 }
 
 const styl = StyleSheet.create({
-  bg: { flex: 1, resizeMode: 'cover' },
-  container: {
+  sweetOrbsBg: { flex: 1, resizeMode: 'cover' },
+  sweetOrbsContainer: {
     flex: 1,
     paddingTop: Platform.OS === 'ios' ? 66 : 50,
     alignItems: 'center',
     paddingHorizontal: 16,
   },
-  title: {
+  sweetOrbsTitle: {
     marginBottom: 10,
     fontSize: 22,
     color: '#2B2B2B',
     fontFamily: 'Sansation-Bold',
   },
-  grid: {
+  sweetOrbsGrid: {
     marginTop: 18,
     width: '100%',
     flexDirection: 'row',
@@ -252,22 +264,22 @@ const styl = StyleSheet.create({
     justifyContent: 'space-around',
     gap: 8,
   },
-  achieveBoard: { width: 162, height: 198, marginBottom: 12 },
-  cardInner: {
+  sweetOrbsAchieveBoard: { width: 162, height: 198, marginBottom: 12 },
+  sweetOrbsCardInner: {
     flex: 1,
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 8,
   },
-  icon: { width: 80, height: 80, resizeMode: 'contain' },
-  achTitle: {
+  sweetOrbsIcon: { width: 80, height: 80, resizeMode: 'contain' },
+  sweetOrbsAchTitle: {
     color: '#fff',
     fontSize: 16,
     fontFamily: 'Sansation-Bold',
     textAlign: 'center',
     marginTop: 7,
   },
-  progressBarTrack: {
+  sweetOrbsProgressBarTrack: {
     width: 126,
     height: 14,
     borderRadius: 999,
@@ -277,7 +289,7 @@ const styl = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
   },
-  progressBarFill: {
+  sweetOrbsProgressBarFill: {
     height: '100%',
     borderRadius: 999,
     backgroundColor: '#7A3CFF',
@@ -285,14 +297,14 @@ const styl = StyleSheet.create({
     left: 0,
     top: 0,
   },
-  progressText: {
+  sweetOrbsProgressText: {
     color: '#fff',
     fontSize: 12,
     textAlign: 'center',
     fontFamily: 'Sansation-Bold',
     zIndex: 1,
   },
-  achSub: {
+  sweetOrbsAchSub: {
     color: '#fff',
     fontSize: 11,
     textAlign: 'center',
@@ -300,7 +312,7 @@ const styl = StyleSheet.create({
     fontFamily: 'Sansation-Regular',
     paddingHorizontal: 5,
   },
-  bottomRow: {
+  sweetOrbsBottomRow: {
     justifyContent: 'flex-end',
     marginTop: 20,
     marginBottom: 30,

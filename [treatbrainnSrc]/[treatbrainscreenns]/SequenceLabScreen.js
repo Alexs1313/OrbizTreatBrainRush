@@ -22,43 +22,45 @@ import CustomRoundButton from '../[treatbraincmppnts]/CustomRoundButton';
 
 import { sequenceLabQuestions } from '../../sequenceLabQuestions';
 
-const BG = require('../../assets/orbizImages/orbizMainBack.png');
-const TOTAL_TIME = 30;
+const sweetOrbsBG = require('../../assets/orbizImages/orbizMainBack.png');
+const sweetOrbsTOTAL_TIME = 30;
 
 const SequenceLabScreen = () => {
   const navigation = useNavigation();
-  const [phase, setPhase] = useState('intro');
-  const [score, setScore] = useState(0);
-  const [secondsLeft, setSecondsLeft] = useState(TOTAL_TIME);
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [isAnswerLocked, setIsAnswerLocked] = useState(false);
-  const [showExitConfirm, setShowExitConfirm] = useState(false);
-  const [timerKey, setTimerKey] = useState(0);
-  const startButtonScale = useRef(new Animated.Value(1)).current;
-  const introHomeButtonScale = useRef(new Animated.Value(1)).current;
+  const [sweetOrbsPhase, setPhase] = useState('intro');
+  const [sweetOrbsScore, setScore] = useState(0);
+  const [sweetOrbsSecondsLeft, setSecondsLeft] = useState(sweetOrbsTOTAL_TIME);
+  const [sweetOrbsQuestionIndex, setQuestionIndex] = useState(0);
+  const [sweetOrbsSelectedIndex, setSelectedIndex] = useState(null);
+  const [sweetOrbsIsAnswerLocked, setIsAnswerLocked] = useState(false);
+  const [sweetOrbsShowExitConfirm, setShowExitConfirm] = useState(false);
+  const [sweetOrbsTimerKey, setTimerKey] = useState(0);
+  const sweetOrbsStartButtonScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsIntroHomeButtonScale = useRef(new Animated.Value(1)).current;
 
-  const bottomHomeButtonScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsBottomHomeButtonScale = useRef(new Animated.Value(1)).current;
 
-  const retryButtonScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsRetryButtonScale = useRef(new Animated.Value(1)).current;
 
-  const closeModalButtonScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsCloseModalButtonScale = useRef(new Animated.Value(1)).current;
 
-  const confirmModalButtonScale = useRef(new Animated.Value(1)).current;
+  const sweetOrbsConfirmModalButtonScale = useRef(
+    new Animated.Value(1),
+  ).current;
 
-  const optionPressScales = useRef([
+  const sweetOrbsOptionPressScales = useRef([
     new Animated.Value(1),
     new Animated.Value(1),
     new Animated.Value(1),
     new Animated.Value(1),
   ]).current;
 
-  const currentQuestion = useMemo(
-    () => sequenceLabQuestions[questionIndex],
-    [questionIndex],
+  const sweetOrbsCurrentQuestion = useMemo(
+    () => sequenceLabQuestions[sweetOrbsQuestionIndex],
+    [sweetOrbsQuestionIndex],
   );
 
-  const pickNextQuestion = () => {
+  const sweetOrbsPickNextQuestion = () => {
     setQuestionIndex(prev => {
       if (sequenceLabQuestions.length <= 1) return prev;
       let next = prev;
@@ -71,9 +73,9 @@ const SequenceLabScreen = () => {
     setIsAnswerLocked(false);
   };
 
-  const onStart = () => {
+  const sweetOrbsOnStart = () => {
     setScore(0);
-    setSecondsLeft(TOTAL_TIME);
+    setSecondsLeft(sweetOrbsTOTAL_TIME);
     setSelectedIndex(null);
 
     setIsAnswerLocked(false);
@@ -86,40 +88,41 @@ const SequenceLabScreen = () => {
     setPhase('playing');
   };
 
-  const onOptionPress = optionIndex => {
-    if (phase !== 'playing' || isAnswerLocked) return;
+  const sweetOrbsOnOptionPress = optionIndex => {
+    if (sweetOrbsPhase !== 'playing' || sweetOrbsIsAnswerLocked) return;
 
     setSelectedIndex(optionIndex);
     setIsAnswerLocked(true);
 
-    const isCorrect = optionIndex === currentQuestion.oddIndex;
+    const isCorrect = optionIndex === sweetOrbsCurrentQuestion.oddIndex;
     if (isCorrect) {
       setScore(prev => prev + 1);
     }
 
     setTimeout(() => {
-      if (phase === 'playing' && secondsLeft > 0) {
-        pickNextQuestion();
+      if (sweetOrbsPhase === 'playing' && sweetOrbsSecondsLeft > 0) {
+        sweetOrbsPickNextQuestion();
       }
     }, 450);
   };
 
-  const getOptionState = optionIndex => {
-    if (!isAnswerLocked || selectedIndex === null) return 'default';
+  const sweetOrbsGetOptionState = optionIndex => {
+    if (!sweetOrbsIsAnswerLocked || sweetOrbsSelectedIndex === null)
+      return 'default';
     if (
-      optionIndex === selectedIndex &&
-      optionIndex === currentQuestion.oddIndex
+      optionIndex === sweetOrbsSelectedIndex &&
+      optionIndex === sweetOrbsCurrentQuestion.oddIndex
     )
       return 'correct';
     if (
-      optionIndex === selectedIndex &&
-      optionIndex !== currentQuestion.oddIndex
+      optionIndex === sweetOrbsSelectedIndex &&
+      optionIndex !== sweetOrbsCurrentQuestion.oddIndex
     )
       return 'wrong';
     return 'default';
   };
 
-  const animatePressIn = scaleValue => {
+  const sweetOrbsAnimatePressIn = scaleValue => {
     Animated.spring(scaleValue, {
       toValue: 0.94,
       useNativeDriver: true,
@@ -129,7 +132,7 @@ const SequenceLabScreen = () => {
     }).start();
   };
 
-  const animatePressOut = scaleValue => {
+  const sweetOrbsAnimatePressOut = scaleValue => {
     Animated.spring(scaleValue, {
       toValue: 1,
       useNativeDriver: true,
@@ -139,21 +142,26 @@ const SequenceLabScreen = () => {
   };
 
   return (
-    <ImageBackground source={BG} style={styles.bg}>
-      <ScrollView contentContainerStyle={styles.scrollContent} bounces={false}>
-        <View style={styles.root}>
-          {phase === 'intro' && (
-            <View style={styles.centerArea}>
+    <ImageBackground source={sweetOrbsBG} style={styles.sweetOrbsBg}>
+      <ScrollView
+        contentContainerStyle={styles.sweetOrbsScrollContent}
+        bounces={false}
+      >
+        <View style={styles.sweetOrbsRoot}>
+          {sweetOrbsPhase === 'intro' && (
+            <View style={styles.sweetOrbsCenterArea}>
               <Image
                 source={require('../../assets/orbizImages/orbztrtorseq.png')}
               />
               <ImageBackground
                 source={require('../../assets/orbizUi/orbizBoard.png')}
-                style={styles.orbizBoard}
+                style={styles.sweetOrbsOrbizBoard}
               >
-                <View style={styles.introTextWrap}>
-                  <Text style={styles.orbizTxt}>Welcome to Sequence Lab.</Text>
-                  <Text style={styles.orbizSecTxt}>
+                <View style={styles.sweetOrbsIntroTextWrap}>
+                  <Text style={styles.sweetOrbsOrbizTxt}>
+                    Welcome to Sequence Lab.
+                  </Text>
+                  <Text style={styles.sweetOrbsOrbizSecTxt}>
                     30 seconds.{'\n'}
                     Find the one that doesn't belong.{'\n\n'}
                     Think fast. Tap smart.{'\n'}
@@ -162,31 +170,43 @@ const SequenceLabScreen = () => {
                 </View>
               </ImageBackground>
 
-              <View style={styles.introButtonsWrap}>
+              <View style={styles.sweetOrbsIntroButtonsWrap}>
                 <Animated.View
-                  style={{ transform: [{ scale: startButtonScale }] }}
+                  style={{ transform: [{ scale: sweetOrbsStartButtonScale }] }}
                 >
                   <TouchableOpacity
-                    onPress={onStart}
-                    onPressIn={() => animatePressIn(startButtonScale)}
-                    onPressOut={() => animatePressOut(startButtonScale)}
+                    onPress={sweetOrbsOnStart}
+                    onPressIn={() =>
+                      sweetOrbsAnimatePressIn(sweetOrbsStartButtonScale)
+                    }
+                    onPressOut={() =>
+                      sweetOrbsAnimatePressOut(sweetOrbsStartButtonScale)
+                    }
                     activeOpacity={0.9}
                   >
                     <ImageBackground
                       source={require('../../assets/orbizImages/orbztrtonbtn.png')}
-                      style={styles.startActionButton}
+                      style={styles.sweetOrbsStartActionButton}
                     >
-                      <Text style={styles.startActionButtonTxt}>Start</Text>
+                      <Text style={styles.sweetOrbsStartActionButtonTxt}>
+                        Start
+                      </Text>
                     </ImageBackground>
                   </TouchableOpacity>
                 </Animated.View>
                 <Animated.View
-                  style={{ transform: [{ scale: introHomeButtonScale }] }}
+                  style={{
+                    transform: [{ scale: sweetOrbsIntroHomeButtonScale }],
+                  }}
                 >
                   <CustomRoundButton
                     onPress={() => setShowExitConfirm(true)}
-                    onPressIn={() => animatePressIn(introHomeButtonScale)}
-                    onPressOut={() => animatePressOut(introHomeButtonScale)}
+                    onPressIn={() =>
+                      sweetOrbsAnimatePressIn(sweetOrbsIntroHomeButtonScale)
+                    }
+                    onPressOut={() =>
+                      sweetOrbsAnimatePressOut(sweetOrbsIntroHomeButtonScale)
+                    }
                     btnImage={require('../../assets/orbizImages/homeicon.png')}
                   />
                 </Animated.View>
@@ -195,68 +215,80 @@ const SequenceLabScreen = () => {
                 <>
                   <Image
                     source={require('../../assets/orbizImages/gameBubble1.png')}
-                    style={styles.introBubbleRight}
+                    style={styles.sweetOrbsIntroBubbleRight}
                   />
                   <Image
                     source={require('../../assets/orbizImages/gameBubble2.png')}
-                    style={styles.introBubbleLeft}
+                    style={styles.sweetOrbsIntroBubbleLeft}
                   />
                 </>
               )}
             </View>
           )}
 
-          {phase === 'playing' && (
-            <View style={styles.playWrap}>
-              <Text style={styles.scoreText}>Current Score: {score}</Text>
+          {sweetOrbsPhase === 'playing' && (
+            <View style={styles.sweetOrbsPlayWrap}>
+              <Text style={styles.sweetOrbsScoreText}>
+                Current Score: {sweetOrbsScore}
+              </Text>
 
-              <View style={styles.timerCircleWrap}>
+              <View style={styles.sweetOrbsTimerCircleWrap}>
                 <CountdownCircleTimer
-                  key={timerKey}
-                  isPlaying={phase === 'playing' && !showExitConfirm}
-                  duration={TOTAL_TIME}
+                  key={sweetOrbsTimerKey}
+                  isPlaying={
+                    sweetOrbsPhase === 'playing' && !sweetOrbsShowExitConfirm
+                  }
+                  duration={sweetOrbsTOTAL_TIME}
                   colors={['#F252AC', '#F252AC']}
-                  colorsTime={[TOTAL_TIME, 0]}
+                  colorsTime={[sweetOrbsTOTAL_TIME, 0]}
                   strokeWidth={15}
                   size={148}
                   trailColor="#6C6D72"
                   onUpdate={remainingTime => setSecondsLeft(remainingTime)}
                   onComplete={() => {
                     setSecondsLeft(0);
-                    addSequenceLabResult(score).catch(() => {});
+                    addSequenceLabResult(sweetOrbsScore).catch(() => {});
                     setPhase('result');
                     return { shouldRepeat: false };
                   }}
                 >
                   {({ remainingTime }) => (
-                    <Text style={styles.timerText}>{remainingTime}</Text>
+                    <Text style={styles.sweetOrbsTimerText}>
+                      {remainingTime}
+                    </Text>
                   )}
                 </CountdownCircleTimer>
               </View>
 
-              <View style={styles.optionsWrap}>
-                {currentQuestion.options.map((option, index) => {
-                  const optionState = getOptionState(index);
+              <View style={styles.sweetOrbsOptionsWrap}>
+                {sweetOrbsCurrentQuestion.options.map((option, index) => {
+                  const optionState = sweetOrbsGetOptionState(index);
                   return (
                     <Animated.View
                       key={`${option}-${index}`}
                       style={{
-                        transform: [{ scale: optionPressScales[index] }],
+                        transform: [
+                          { scale: sweetOrbsOptionPressScales[index] },
+                        ],
                       }}
                     >
                       <TouchableOpacity
                         activeOpacity={0.85}
-                        onPress={() => onOptionPress(index)}
+                        onPress={() => sweetOrbsOnOptionPress(index)}
                         onPressIn={() =>
-                          animatePressIn(optionPressScales[index])
+                          sweetOrbsAnimatePressIn(
+                            sweetOrbsOptionPressScales[index],
+                          )
                         }
                         onPressOut={() =>
-                          animatePressOut(optionPressScales[index])
+                          sweetOrbsAnimatePressOut(
+                            sweetOrbsOptionPressScales[index],
+                          )
                         }
-                        disabled={isAnswerLocked}
+                        disabled={sweetOrbsIsAnswerLocked}
                       >
                         <ImageBackground
-                          style={[styles.optionButton]}
+                          style={[styles.sweetOrbsOptionButton]}
                           source={
                             optionState === 'wrong'
                               ? require('../../assets/orbizImages/orbztrtorpartoptwr.png')
@@ -265,7 +297,9 @@ const SequenceLabScreen = () => {
                               : require('../../assets/orbizImages/orbztrtorpaopti.png')
                           }
                         >
-                          <Text style={styles.optionText}>{option}</Text>
+                          <Text style={styles.sweetOrbsOptionText}>
+                            {option}
+                          </Text>
                         </ImageBackground>
                       </TouchableOpacity>
                     </Animated.View>
@@ -275,31 +309,35 @@ const SequenceLabScreen = () => {
             </View>
           )}
 
-          {phase === 'result' && (
-            <View style={styles.resultWrap}>
+          {sweetOrbsPhase === 'result' && (
+            <View style={styles.sweetOrbsResultWrap}>
               <Image
                 source={require('../../assets/orbizImages/orbztrtorres.png')}
               />
               <ImageBackground
                 source={require('../../assets/orbizUi/orbizBoard.png')}
-                style={styles.resultBoard}
+                style={styles.sweetOrbsResultBoard}
               >
-                <Text style={styles.resultTitle}>Time's up!</Text>
-                <Text style={styles.resultText}>
-                  Your result: {score} sequences solved{'\n'}
+                <Text style={styles.sweetOrbsResultTitle}>Time's up!</Text>
+                <Text style={styles.sweetOrbsResultText}>
+                  Your result: {sweetOrbsScore} sequences solved{'\n'}
                   Great reflexes and sharp thinking!{'\n'}
                   Ready to beat your score?
                 </Text>
               </ImageBackground>
 
-              <View style={styles.resultButtonsWrap}>
+              <View style={styles.sweetOrbsResultButtonsWrap}>
                 <Animated.View
-                  style={{ transform: [{ scale: retryButtonScale }] }}
+                  style={{ transform: [{ scale: sweetOrbsRetryButtonScale }] }}
                 >
                   <CustomRoundButton
-                    onPress={onStart}
-                    onPressIn={() => animatePressIn(retryButtonScale)}
-                    onPressOut={() => animatePressOut(retryButtonScale)}
+                    onPress={sweetOrbsOnStart}
+                    onPressIn={() =>
+                      sweetOrbsAnimatePressIn(sweetOrbsRetryButtonScale)
+                    }
+                    onPressOut={() =>
+                      sweetOrbsAnimatePressOut(sweetOrbsRetryButtonScale)
+                    }
                     iconStyle={0.5}
                     btnImage={require('../../assets/orbizImages/orbztrtorest.png')}
                   />
@@ -310,34 +348,40 @@ const SequenceLabScreen = () => {
                 <>
                   <Image
                     source={require('../../assets/orbizImages/gameBubble1.png')}
-                    style={styles.introBubbleRight}
+                    style={styles.sweetOrbsIntroBubbleRight}
                   />
                   <Image
                     source={require('../../assets/orbizImages/gameBubble2.png')}
-                    style={styles.introBubbleLeft}
+                    style={styles.sweetOrbsIntroBubbleLeft}
                   />
                 </>
               )}
             </View>
           )}
 
-          {phase !== 'intro' && (
-            <View style={styles.homeBtnWrap}>
+          {sweetOrbsPhase !== 'intro' && (
+            <View style={styles.sweetOrbsHomeBtnWrap}>
               <Animated.View
-                style={{ transform: [{ scale: bottomHomeButtonScale }] }}
+                style={{
+                  transform: [{ scale: sweetOrbsBottomHomeButtonScale }],
+                }}
               >
                 <CustomRoundButton
                   onPress={() => setShowExitConfirm(true)}
-                  onPressIn={() => animatePressIn(bottomHomeButtonScale)}
-                  onPressOut={() => animatePressOut(bottomHomeButtonScale)}
+                  onPressIn={() =>
+                    sweetOrbsAnimatePressIn(sweetOrbsBottomHomeButtonScale)
+                  }
+                  onPressOut={() =>
+                    sweetOrbsAnimatePressOut(sweetOrbsBottomHomeButtonScale)
+                  }
                   btnImage={require('../../assets/orbizImages/homeicon.png')}
                 />
               </Animated.View>
             </View>
           )}
 
-          {showExitConfirm && (
-            <View style={styles.modalOverlay}>
+          {sweetOrbsShowExitConfirm && (
+            <View style={styles.sweetOrbsModalOverlay}>
               <BlurView
                 blurType="light"
                 blurAmount={1}
@@ -349,32 +393,46 @@ const SequenceLabScreen = () => {
               />
               <ImageBackground
                 source={require('../../assets/orbizUi/orbizQuestBoard.png')}
-                style={styles.confirmBoard}
+                style={styles.sweetOrbsConfirmBoard}
                 resizeMode="stretch"
               >
-                <Text style={styles.confirmText}>
+                <Text style={styles.sweetOrbsConfirmText}>
                   Leave the game?{'\n'}
                   Your sweet progress will melt away.
                 </Text>
-                <View style={styles.confirmButtons}>
+                <View style={styles.sweetOrbsConfirmButtons}>
                   <Animated.View
-                    style={{ transform: [{ scale: closeModalButtonScale }] }}
+                    style={{
+                      transform: [{ scale: sweetOrbsCloseModalButtonScale }],
+                    }}
                   >
                     <CustomRoundButton
                       onPress={() => setShowExitConfirm(false)}
-                      onPressIn={() => animatePressIn(closeModalButtonScale)}
-                      onPressOut={() => animatePressOut(closeModalButtonScale)}
+                      onPressIn={() =>
+                        sweetOrbsAnimatePressIn(sweetOrbsCloseModalButtonScale)
+                      }
+                      onPressOut={() =>
+                        sweetOrbsAnimatePressOut(sweetOrbsCloseModalButtonScale)
+                      }
                       btnImage={require('../../assets/orbizImages/orbztrtorno.png')}
                     />
                   </Animated.View>
                   <Animated.View
-                    style={{ transform: [{ scale: confirmModalButtonScale }] }}
+                    style={{
+                      transform: [{ scale: sweetOrbsConfirmModalButtonScale }],
+                    }}
                   >
                     <CustomRoundButton
                       onPress={() => navigation.goBack()}
-                      onPressIn={() => animatePressIn(confirmModalButtonScale)}
+                      onPressIn={() =>
+                        sweetOrbsAnimatePressIn(
+                          sweetOrbsConfirmModalButtonScale,
+                        )
+                      }
                       onPressOut={() =>
-                        animatePressOut(confirmModalButtonScale)
+                        sweetOrbsAnimatePressOut(
+                          sweetOrbsConfirmModalButtonScale,
+                        )
                       }
                       btnImage={require('../../assets/orbizImages/orbztrtoyes.png')}
                     />
@@ -390,26 +448,26 @@ const SequenceLabScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  scrollContent: { flexGrow: 1 },
-  root: {
+  sweetOrbsBg: { flex: 1 },
+  sweetOrbsScrollContent: { flexGrow: 1 },
+  sweetOrbsRoot: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: 60,
     paddingBottom: 30,
   },
-  centerArea: {
+  sweetOrbsCenterArea: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
   },
-  sequenceTitleWrap: {
+  sweetOrbsSequenceTitleWrap: {
     alignItems: 'center',
     marginBottom: 6,
   },
-  titleTop: {
+  sweetOrbsTitleTop: {
     fontSize: 52,
     lineHeight: 54,
     color: '#FFB100',
@@ -418,7 +476,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 4 },
     textShadowRadius: 0,
   },
-  titleBottom: {
+  sweetOrbsTitleBottom: {
     fontSize: 64,
     lineHeight: 66,
     color: '#9A4DFF',
@@ -428,23 +486,23 @@ const styles = StyleSheet.create({
     textShadowRadius: 0,
     marginTop: -8,
   },
-  orbizBoard: {
+  sweetOrbsOrbizBoard: {
     width: 359,
     height: 261,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 52,
   },
-  introTextWrap: {
+  sweetOrbsIntroTextWrap: {
     paddingHorizontal: 20,
   },
-  orbizTxt: {
+  sweetOrbsOrbizTxt: {
     fontSize: 22,
     color: '#FFFFFF',
     textAlign: 'center',
     fontFamily: 'Sansation-Bold',
   },
-  orbizSecTxt: {
+  sweetOrbsOrbizSecTxt: {
     fontSize: 18,
     color: '#FFFFFF',
     textAlign: 'center',
@@ -454,51 +512,51 @@ const styles = StyleSheet.create({
     marginTop: 14,
     paddingHorizontal: 8,
   },
-  introButtonsWrap: {
+  sweetOrbsIntroButtonsWrap: {
     gap: 15,
     marginTop: 12,
     alignItems: 'center',
   },
-  startActionButton: {
+  sweetOrbsStartActionButton: {
     width: 152,
     height: 58,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  startActionButtonTxt: {
+  sweetOrbsStartActionButtonTxt: {
     fontSize: 18,
     color: '#FFFFFF',
     fontFamily: 'Sansation-Bold',
   },
-  introBubbleRight: { position: 'absolute', right: -20, top: 190 },
-  introBubbleLeft: { position: 'absolute', left: 0, top: 0 },
-  playWrap: { width: '100%', alignItems: 'center', marginTop: 10 },
-  scoreText: {
+  sweetOrbsIntroBubbleRight: { position: 'absolute', right: -20, top: 190 },
+  sweetOrbsIntroBubbleLeft: { position: 'absolute', left: 0, top: 0 },
+  sweetOrbsPlayWrap: { width: '100%', alignItems: 'center', marginTop: 10 },
+  sweetOrbsScoreText: {
     color: '#FFFFFF',
     fontSize: 22,
     fontFamily: 'Sansation-Bold',
     marginBottom: 29,
   },
-  timerCircleWrap: {
+  sweetOrbsTimerCircleWrap: {
     width: 148,
     height: 148,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
-  timerText: {
+  sweetOrbsTimerText: {
     fontSize: 74,
     color: '#F252AC',
     fontFamily: 'Sansation-Bold',
     lineHeight: 80,
   },
-  optionsWrap: {
+  sweetOrbsOptionsWrap: {
     width: '100%',
     marginTop: 26,
     alignItems: 'center',
     gap: 16,
   },
-  optionButton: {
+  sweetOrbsOptionButton: {
     width: 248,
     minHeight: 78,
 
@@ -506,13 +564,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  optionText: {
+  sweetOrbsOptionText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontFamily: 'Sansation-Bold',
     textAlign: 'center',
   },
-  resultWrap: {
+  sweetOrbsResultWrap: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -520,20 +578,20 @@ const styles = StyleSheet.create({
     gap: 14,
     flex: 1,
   },
-  resultBoard: {
+  sweetOrbsResultBoard: {
     width: 350,
     height: 256,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 80,
   },
-  resultTitle: {
+  sweetOrbsResultTitle: {
     fontSize: 22,
     color: '#FFFFFF',
     fontFamily: 'Sansation-Bold',
     marginBottom: 20,
   },
-  resultText: {
+  sweetOrbsResultText: {
     fontSize: 18,
     color: '#FFFFFF',
     textAlign: 'center',
@@ -542,11 +600,11 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingHorizontal: 20,
   },
-  resultButtonsWrap: { top: -48 },
-  homeBtnWrap: {
+  sweetOrbsResultButtonsWrap: { top: -48 },
+  sweetOrbsHomeBtnWrap: {
     marginTop: 14,
   },
-  modalOverlay: {
+  sweetOrbsModalOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -556,20 +614,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  confirmBoard: {
+  sweetOrbsConfirmBoard: {
     width: 334,
     height: 194,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  confirmText: {
+  sweetOrbsConfirmText: {
     color: '#FFFFFF',
     textAlign: 'center',
     fontSize: 18,
     fontFamily: 'Sansation-Bold',
     paddingHorizontal: 42,
   },
-  confirmButtons: {
+  sweetOrbsConfirmButtons: {
     flexDirection: 'row',
     gap: 22,
 

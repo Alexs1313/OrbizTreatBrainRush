@@ -5,6 +5,7 @@ import Sound from 'react-native-sound';
 import CustomRoundButton from '../[treatbraincmppnts]/CustomRoundButton';
 import CustomMenuButton from '../[treatbraincmppnts]/CustomMenuButton';
 import { BlurView } from '@react-native-community/blur';
+
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useOrbizTreatStore } from '../[treatbrainstoragge]/orbizTreatContext';
@@ -216,7 +217,7 @@ const MainScreen = () => {
 
   const shareApp = () => {
     Linking.openURL(
-      'https://apps.apple.com/us/app/orbiz-treat-brainrush/id6760121334',
+      'https://apps.apple.com/us/app/sweet-brain-rush-orbiz/id6760341621',
     );
   };
 
@@ -251,7 +252,12 @@ const MainScreen = () => {
           <View>
             <Image
               source={require('../../assets/orbizImages/orbztrtohomel.png')}
-              style={{ marginBottom: 20, alignSelf: 'center' }}
+              style={{
+                marginBottom: 20,
+                alignSelf: 'center',
+                width: 290,
+                height: 160,
+              }}
             />
 
             <ImageBackground

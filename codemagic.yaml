@@ -1,19 +1,19 @@
 workflows:
   ios-workflow:
-    name: Orbiz Treat BrainRush
+    name: Sweet Brain Rush Orbiz
     max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
-      app_store_connect: TreatBrainRushAPIKey
+      app_store_connect: SweetBrainRushAPIKey
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.djpforbsl.kjjdsee.qwx
+        bundle_identifier: com.SweetBrainRushOrbiz
       vars:
-        BUNDLE_ID: com.djpforbsl.kjjdsee.qwx
+        BUNDLE_ID: com.SweetBrainRushOrbiz
         XCODE_WORKSPACE: OrbizTreatBrainRush.xcworkspace
         XCODE_SCHEME: OrbizTreatBrainRush
-        APP_STORE_APPLE_ID: 6760121334
+        APP_STORE_APPLE_ID: 6760341621
     scripts:
       - name: Install npm dependencies
         script: |
@@ -44,4 +44,4 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_app_store: true
-        copyright: Orbiz Treat BrainRush 2026
+        copyright: Sweet Brain Rush Orbiz 2026
