@@ -387,10 +387,10 @@ const MainScreen = () => {
           source={require('../../assets/orbizImages/homeBubble2.png')}
           style={{ position: 'absolute', right: 0, top: 90 }}
         />
-        <Image
+        {/* <Image
           source={require('../../assets/orbizImages/homeBubble3.png')}
           style={{ position: 'absolute', left: 0, top: 290 }}
-        />
+        /> */}
         <Image
           source={require('../../assets/orbizImages/homeBubble4.png')}
           style={{ position: 'absolute', right: 30, bottom: 30 }}

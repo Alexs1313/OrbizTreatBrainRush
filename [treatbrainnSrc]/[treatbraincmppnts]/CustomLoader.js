@@ -106,7 +106,7 @@ const CustomLoader = () => {
       source={require('../../assets/orbizImages/loaderBack.png')}
       style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
     >
-      <Animated.Image
+      {/* <Animated.Image
         source={require('../../assets/orbizImages/loaderBuubles.png')}
         style={{
           position: 'absolute',
@@ -125,12 +125,12 @@ const CustomLoader = () => {
           opacity: orbOpacity,
           transform: [{ translateY: orbFlyUp }, { rotate: '-15deg' }],
         }}
-      />
+      /> */}
       <View style={styles.orbsAnimWrapper}>
         <WebView
           originWhitelist={['*']}
           source={{ html: webviewloaderhtml }}
-          style={{ width: 220, height: 90, backgroundColor: 'transparent' }}
+          style={{ width: 260, height: 90, backgroundColor: 'transparent' }}
           scrollEnabled={false}
         />
       </View>
@@ -140,11 +140,9 @@ const CustomLoader = () => {
 
 const styles = StyleSheet.create({
   orbsAnimWrapper: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
 });
 
