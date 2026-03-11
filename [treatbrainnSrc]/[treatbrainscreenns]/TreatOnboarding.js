@@ -23,7 +23,7 @@ const TreatOnboarding = () => {
 
   const orbizViews = [
     {
-      orbizttl: 'Orb Party Mode — Play Together',
+      orbizttl: `Orb Party Mode`,
       orbizdesc:
         'Challenge your friends in fast rounds where everyone thinks quickly and votes for the correct answer.',
       orbizimg:
@@ -32,7 +32,7 @@ const TreatOnboarding = () => {
           : require('../../assets/orbizImages/icon.png'),
     },
     {
-      orbizttl: 'Sequence Lab — Solo Mode',
+      orbizttl: 'Sequence Lab',
       orbizdesc:
         'Test your logic and focus by finding the odd item in each sequence before time runs out.',
       orbizimg: require('../../assets/orbizImages/oboardimg1.png'),
